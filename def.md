@@ -1,4 +1,6 @@
 
+## Norme irc 1495
+  https://datatracker.ietf.org/doc/html/rfc1459
 ## Définitions
 
 ### Port
