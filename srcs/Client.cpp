@@ -1,32 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/07 16:46:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/08 16:19:03 by kprigent         ###   ########.fr       */
+/*   Created: 2024/07/07 17:36:18 by kprigent          #+#    #+#             */
+/*   Updated: 2024/07/07 17:54:03 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_HPP
-# define CLIENT_HPP
+#include "../Includes/Client.hpp"
 
-# include <string>
-
-class Client
+Client::Client()
 {
-	private:
-		int _fd; // client fd
-		std::string _IP; // Adresse Ip du client 
-	public:
-		Client();
-		
-		void SetFd(int fd);
-		int GetFd();
+}
 
-		void SetIp(std::string ip);
-};
+void Client::SetFd(int fd)
+{
+	this->_fd = fd;
+}
 
-#endif
+int Client::GetFd()
+{
+	return (this->_fd);
+}
+
+void Client::SetIp(std::string ip)
+{
+	this->_IP = ip;
+}
+
