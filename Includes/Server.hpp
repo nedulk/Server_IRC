@@ -6,33 +6,16 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/08 17:52:22 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:06:41 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
+# include "irc.hpp"
 
-# include <iostream>
-# include <unistd.h>
-# include <cstring>
-# include <vector>
-# include <netinet/in.h>
-# include <csignal> 
-# include <fcntl.h>
-# include <sys/socket.h> 
-# include <arpa/inet.h>
-# include <poll.h> 
-# include <sys/types.h>
-# include "Client.hpp"
-
-# define RESET   "\033[0m"
-# define RED     "\033[31m"
-# define GREEN   "\033[32m"
-# define BLUE    "\033[34m"
-# define YELLOW  "\033[33m"
-
+class Client;
 // La class Server possede toutes les informations du serveur.
 
 class Server
@@ -47,9 +30,10 @@ class Server
 		std::vector<Client> _Clients; // Ici on va stocker la liste des Clients qui sont connectes sur le serveur.
 		std::vector<struct pollfd> fds; // Ici on va stocker tous les fds des Clients, pour "surveiller".
 	
-		static bool _Signal;	
+		Client *Cli;
+		static bool _Signal;
 	public:
-		Server();
+		Server(int port, std::string password);
 		void ServerInit();
 		void ServerSocket();
 		void NewClient();
@@ -57,7 +41,9 @@ class Server
 
 		static void SignalHandler(int signum); // La static permet d'acceder a la variable static _Signal sans instancier 
 											    // un objet Server.
-		void passwordHandler(int fd_newClient);
+		void FirstCoHandler(int fd_newClient, Client *newClient);
+		void PasswordCheck(int fd_newClient);
+		
 		void CloseFds();
 		void ClearClients(int fd);
 };

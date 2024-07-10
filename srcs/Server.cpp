@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/08 17:35:19 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/10 17:06:53 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,14 +55,12 @@ void Server::SignalHandler(int signum)
 }
 
 // -1 permet d'indiquer que le socket n'est pas encore initialise/pas encore ouvert.
-Server::Server(): _ServerSocketFd(-1)
+Server::Server(int port, std::string password): _Password(password), _Port(port), _ServerSocketFd(-1)
 {
 }
 
 void Server::ServerInit()
 {
-	this->_Port = 6667; // 0 -> 1023 port reserves (ex: http (80), SSh (22)..)
-						// 1024 -> 49151 plage utilisable
 	ServerSocket();
 
 	std::cout << GREEN "Server connected -> PORT: " << this->_Port << "" RESET << std::endl;
@@ -136,7 +134,7 @@ void Server::ServerSocket()
 
 void Server::NewClient()
 {
-	Client newClient;
+	Client *newClient = new Client();
 	
 	struct sockaddr_in newClient_addr;
 	struct pollfd NewPoll;
@@ -160,8 +158,11 @@ void Server::NewClient()
 	NewPoll.events = POLLIN;
 	NewPoll.revents = 0;
 	
+	newClient->SetFd(socketFd_newClient);
+	newClient->SetIp(inet_ntoa((newClient_addr.sin_addr)));
+	_Clients.push_back(*newClient);
 	fds.push_back(NewPoll);
-	passwordHandler(socketFd_newClient);
+	FirstCoHandler(socketFd_newClient, newClient);
 }
 
 void Server::ReceiveNewData(int fd)
