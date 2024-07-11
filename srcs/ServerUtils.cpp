@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Includes/Server.hpp"
+#include "Server.hpp"
 
 void Server::PasswordCheck(int fd_newClient)
 {
