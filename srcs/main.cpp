@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Includes/irc.hpp"
+#include "irc.hpp"
 
 //////////////// MONITORING DEBUG ////////
 #include <thread> 						//

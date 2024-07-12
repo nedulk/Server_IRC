@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Includes/Server.hpp"
+#include "Server.hpp"
 
 int	Server::NickCheck_oc(std::string buff_rr)
 {

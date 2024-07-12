@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../Includes/Client.hpp"
+#include "Client.hpp"
 
 Client::Client()
 {
