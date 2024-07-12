@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/11 21:01:02 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 12:04:48 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,13 +130,21 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 {
 	//PASS
 	PasswordCheck(fd_newClient);
-	std::cout << "Password [OK]" << std::endl;
+	std::cout << "PASS cmd [OK]" << std::endl;
 	
 	//NICK
 	NickCheck(fd_newClient, newClient) ;
-	std::cout << "Nickname [OK]" << std::endl;
+	std::cout << "NICK cmd [OK]" << std::endl;
 	
 	//USER
 	newClient->UserCheck(fd_newClient);
-	std::cout << "Username [OK]" << std::endl;
+	std::cout << "USER cmd [OK]" << std::endl;
+
+	std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
+	std::cout << BGREEN " connected" RESET << " ✔️" << std::endl;
+	
+	//WELCOME MSG -> to client 
+	std::string str(newClient->GetNick());
+	std::string message = std::string(GREEN).append(RPL_WELCOME(str)).append("\n").append(RESET);
+	send(fd_newClient, message.c_str(), message.size(), 0);
 }

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:36:18 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 10:21:03 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 11:51:33 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ int Client::GetFd()
 void Client::SetIp(std::string ip)
 {
 	this->_IP = ip;
+}
+
+std::string Client::GetIp()
+{
+	return(this->_IP);
 }
 
 void Client::SetNick(std::string nickname)
@@ -84,24 +89,33 @@ void Client::UserCheck(int fd_newClient)
 	while (1)
 	{
 		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
-		if (std::strncmp(buff_r, "USER ", 5) == 0)
-		{
-			char *buff_rr = buff_r + 5;
-			while (*buff_rr == ' ')
-				buff_rr++;
-			char *p = buff_rr;
-			while (*p != '\0')
+		regex_t regex;
+		int ret;
+		ret = regcomp(&regex, REGEXUSER, REG_EXTENDED);
+		if (!ret)
+		{	
+			ret = regexec(&regex, buff_r, 0, NULL, 0);
+			if (!ret)
 			{
-				if (*p == '\n')
+				char *buff_rr = buff_r;
+				while(*buff_rr != ':')
+					buff_rr++;
+				buff_rr++;
+				char *p = buff_rr;
+				while (*p != '\0')
 				{
-					*p = '\0';
-					break;
+					if (*p == '\n')
+					{
+						*p = '\0';
+						break;
+					}
+					p++;
 				}
-				p++;
+				SetUsername(buff_rr);
+				break ;
 			}
-			SetUsername(buff_rr);
-			break ;
 		}
+		regfree(&regex);
 	}	
 }
 

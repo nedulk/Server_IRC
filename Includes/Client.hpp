@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 16:46:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/11 16:17:13 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 11:51:40 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Client
 		int GetFd();
 
 		void SetIp(std::string ip);
+		std::string GetIp();
 
 		void SetNick(std::string nickname);
 		std::string GetNick();

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:11:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/11 20:13:50 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 11:35:25 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,23 +26,24 @@ int main(int argc, char **argv)
 		std::cout << RED "Missing arguments" RESET << std::endl;
 	else
 	{
-		///////////////////////// MONITORING DEBUG ////////////////////////////////////////////
 		Server server(std::atoi(argv[1]), argv[2]);
-		std::thread serverStateThread([&server]()
-		{
-			while (running)
-			{
-				cout_mutex.lock();
-				std::cout << "\033[2J\033[H";
-				std::cout << YELLOW << "================= SERVER STATE =================" << RESET << std::endl;
-				server.printState();
-				cout_mutex.unlock();
-				std::this_thread::sleep_for(std::chrono::seconds(1));
-			}
-		});
-		serverStateThread.detach();
+		///////////////////////// MONITORING DEBUG ////////////////////////////////////////////
+		// std::thread serverStateThread([&server]()
+		// {
+		// 	while (running)
+		// 	{
+		// 		cout_mutex.lock();
+		// 		std::cout << "\033[2J\033[H";
+		// 		std::cout << YELLOW << "================= SERVER STATE =================" << RESET << std::endl;
+		// 		server.printState();
+		// 		cout_mutex.unlock();
+		// 		std::this_thread::sleep_for(std::chrono::seconds(1));
+		// 	}
+		// });
+		// serverStateThread.detach();
 		//////////////////////////////////////////////////////////////////////////////////////
 		
+		std::cout << YELLOW << "===================== SERVER IRC =====================" << RESET << std::endl;
 		try
 		{
 			signal(SIGINT, Server::SignalHandler);

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/11 21:00:33 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 11:56:57 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,12 @@ void Server::ServerInit()
 {
 	ServerSocket();
 
-	// std::cout << GREEN "Server connected -> PORT: " << this->_Port << "" RESET << std::endl;
-	// std::cout << GREEN "                 -> SOCKET_FD: " << this->_ServerSocketFd << "" RESET << std::endl;
+	std::cout << DARK "    Port: " << this->_Port << "  |  " RESET;
+	std::cout << DARK "Socket fd: " << this->_ServerSocketFd << "  |  " RESET;
+	std::cout << DARK "Password: " << this->_Password << RESET << std::endl;
 
-	// std::cout << std::endl;
-	// std::cout << GREEN "Waiting for clients ...." RESET << std::endl;
+	std::cout << std::endl;
+	std::cout << GREEN "Waiting for clients ...." RESET << std::endl;
 	
 	while (Server::_Signal == false)
 	{
@@ -161,6 +162,7 @@ void Server::NewClient()
 	newClient.SetFd(socketFd_newClient);
 	newClient.SetIp(inet_ntoa((newClient_addr.sin_addr)));
 	fds.push_back(NewPoll);
+	std::cout << ITALIC "New client [" << newClient.GetIp() << "]" << " [" << newClient.GetFd() << "]" RESET << std::endl;
 	FirstCoHandler(socketFd_newClient, &newClient);
 	_Clients.push_back(newClient);
 }
@@ -182,7 +184,7 @@ void Server::ReceiveNewData(int fd)
 	else
 	{
 		 buff[bytes] = '\0';
-		 std::cout << BLUE "Client |" << fd << "| : " RESET << buff << std::endl;
+		 std::cout << BLUE "Client |" << fd << "| : " RESET << buff;
 	}
 }
 
