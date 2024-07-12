@@ -7,7 +7,7 @@
 std::string Command::RegexCmd(std::string buff)
 {
 	std::vector <std::string> Regex_vector = {NICK, USER, QUIT, PRIVMSG, JOIN,
-		PART, MODE, TOPIC, INVITE, KICK, QUIT};
+		MODE, TOPIC, INVITE, KICK, QUIT};
 	
 	regex_t regex;
 	int ret;
