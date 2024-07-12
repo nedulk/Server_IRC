@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 16:10:30 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 16:47:10 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,11 @@ void Server::ReceiveNewData(int fd)
 	{
 		buff[bytes] = '\0';
 		std::cout << BLUE "Client |" << fd << "| : " RESET << buff;
-		Command->execCmd(Command->RegexCmd(buff));
+		std::string regex = Command->RegexCmd(buff);
+		if (!regex.empty())
+		{	
+			Command->execCmd(regex);
+		}
 	}
 }
 
@@ -193,8 +197,8 @@ void Server::ClearClients(int fd)
 {
 	// Supression d'un client dans la liste. Ex: deconnexion
 	for (std::vector<Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it) // pre-incrementation par convention
-	{																		  // ++it incremente la valeur et retourne 			
-		if (it->GetFd() == fd)														     // la valeur incrementee
+	{																		  			  // ++it incremente la valeur et retourne 			
+		if (it->GetFd() == fd)														      // la valeur incrementee
 		{
 			_Clients.erase(it);
 			break ;

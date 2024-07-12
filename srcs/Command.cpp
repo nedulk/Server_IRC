@@ -50,7 +50,7 @@ void Command::execCmd(std::string cmd)
 		std::cout << YELLOW "MODE cmd detected" RESET << std::endl;
 		return ;
 	}
-	else if (cmd ==TOPIC)
+	else if (cmd == TOPIC)
 	{
 		std::cout << YELLOW "TOPIC cmd detected" RESET << std::endl;
 		return ;
