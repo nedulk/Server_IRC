@@ -20,7 +20,7 @@ class Client;
 
 class Server
 {
-	private:
+	protected:
 		
 		std::string _Password;
 		int _Port; // "ex: port 80" . Point d'acces numerique sur le pc. Permet de differencier les services.
@@ -29,7 +29,8 @@ class Server
 		
 		std::vector<struct pollfd> fds; // Ici on va stocker tous les fds des Clients, pour "surveiller".
 		std::vector<Client> _Clients; // Ici on va stocker la liste des Clients qui sont connectes sur le serveur.
-	
+//		std::map<std::string, Channel>	_channelList;
+
 		Client *Cli;
 		static bool _Signal;
 	public:
@@ -50,6 +51,10 @@ class Server
 		void CloseFds();
 		void ClearClients(int fd);
 		void printState();
+
+		Client&	getClientByName(std::string name);
+		Client&	getClientByFd(int fd);
+		void broadcastMsg(std::string &msg, std::string &channelName, Client &sender);
 };
 		
 #endif		

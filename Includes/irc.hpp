@@ -18,6 +18,7 @@
 # include <cstring>
 # include <cstdlib>
 # include <vector>
+# include <map>
 # include <netinet/in.h>
 # include <string>
 # include <csignal> 
@@ -57,6 +58,20 @@
 # define BCYAN "\033[1;36m"
 # define BWHITE "\033[1;37m"
 # define BRESET "\033[1;0m"
+
+enum {
+	USER,
+	NICK,
+	PASS,
+	QUIT,
+	PRIVMSG,
+	JOIN,
+	PART,
+	MODE,
+	TOPIC,
+	INVITE,
+	KICK,
+};
 
 /////////////////////////////////// ERROR MSG //////////////////////////////////////////////////////////
 # define ERR_NOSUCHNICK(input, nick)			"401 " + input + " " + nick + " :No such nick/channel"
@@ -102,6 +117,8 @@
 # define REGEXUSER "USER *0 *\\* *: *[a-zA-Z]{1,9}"
 
 # include "Server.hpp"
-# include "Client.hpp" 
+# include "Client.hpp"
+# include "Channel.hpp"
+# include "Command.hpp"
 
 #endif

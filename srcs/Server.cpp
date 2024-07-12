@@ -268,3 +268,37 @@ void Server::printState()
     //     }
     // }
 }
+
+Client &Server::getClientByName(std::string name)
+{
+	for (std::vector<Client>::iterator it = _Clients.begin(); it != _Clients.end(); it++)
+	{
+		if (it->GetNick() == name)
+			return (*it);
+	}
+	throw (std::runtime_error("Client not found"));
+}
+
+//void Server::broadcastMsg(std::string& msg, std::string& channelName, Client& sender)
+//{
+//	try
+//	{
+//		Channel&	channel = _channelList.at(channelName);
+//		if (channel.getUserList().count(sender.GetFd()) == 0)
+//		{
+//			std::cerr << RED << sender.GetNick() << " not in channel " << channelName << RESET << std::endl;
+//			return ;
+//		}
+//		for (std::map<int, Client*>::iterator it = channel.getUserList().begin();
+//			it != channel.getUserList().end();
+//			it++)
+//		{
+//			if (it->second->GetFd() != sender.GetFd())
+//				send(it->second->GetFd(), msg.c_str(), msg.size(), 0);
+//		}
+//	}
+//	catch (std::exception& e)
+//	{
+//		std::cerr << RED "Channel '" << channelName <<  "' doesn't exist" RESET << std::endl;
+//	}
+//}

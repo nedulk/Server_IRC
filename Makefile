@@ -13,7 +13,11 @@
 SRC = srcs/main.cpp \
 	  srcs/Client.cpp \
 	  srcs/Server.cpp \
-	  srcs/ServerUtils.cpp
+	  srcs/ServerUtils.cpp \
+	  srcs/Channel.cpp \
+	  srcs/Command.cpp \
+	  srcs/commands/Join.cpp \
+	  srcs/commands/PrivMsg.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

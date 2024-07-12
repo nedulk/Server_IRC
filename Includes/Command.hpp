@@ -13,12 +13,16 @@
 #ifndef COMMAND_HPP
 # define COMMAND_HPP
 
-class command
-{
-	protected:
+# include "irc.hpp"
 
-	public:
-		
+class Command
+{
+private:
+	static void	privMsg(Server& server, Client& sender, std::string& receiver, std::string& msg);
+	static void	join(Server& server, Client& sender, std::string& channel, std::string& key);
+
+public:
+	static void	execCmd(Server& server, int cmdName, Client& sender, std::vector<std::string> args);
 };
 
 #endif
