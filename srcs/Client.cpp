@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:36:18 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 11:51:33 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 15:06:38 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void Client::UserCheck(int fd_newClient)
 		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
 		regex_t regex;
 		int ret;
-		ret = regcomp(&regex, REGEXUSER, REG_EXTENDED);
+		ret = regcomp(&regex, USER, REG_EXTENDED);
 		if (!ret)
 		{	
 			ret = regexec(&regex, buff_r, 0, NULL, 0);

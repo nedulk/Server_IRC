@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 13:57:53 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 15:21:35 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 			{	
 				regex_t regex;
 				int ret;
-				ret = regcomp(&regex, REGEXNICKNAME, REG_EXTENDED);
+				ret = regcomp(&regex, NICK, REG_EXTENDED);
 				if (!ret)
 				{	
 					ret = regexec(&regex, buff_rr, 0, NULL, 0);

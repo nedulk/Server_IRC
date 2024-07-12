@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/11 18:04:34 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 15:21:05 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "irc.hpp"
 
 class Client;
+class Command;
 // La class Server possede toutes les informations du serveur.
 
 class Server
@@ -47,6 +48,8 @@ class Server
 		
 		int NickCheck_oc(std::string buff_rr);
 		void NickCheck(int fd_newClient, Client *newClient);
+		
+		Command *Command;
 		
 		void CloseFds();
 		void ClearClients(int fd);
