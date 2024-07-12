@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/10 17:06:53 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/11 21:00:33 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,11 @@ void Server::ServerInit()
 {
 	ServerSocket();
 
-	std::cout << GREEN "Server connected -> PORT: " << this->_Port << "" RESET << std::endl;
-	std::cout << GREEN "                 -> SOCKET_FD: " << this->_ServerSocketFd << "" RESET << std::endl;
+	// std::cout << GREEN "Server connected -> PORT: " << this->_Port << "" RESET << std::endl;
+	// std::cout << GREEN "                 -> SOCKET_FD: " << this->_ServerSocketFd << "" RESET << std::endl;
 
-	std::cout << std::endl;
-	std::cout << GREEN "Waiting for clients ...." RESET << std::endl;
+	// std::cout << std::endl;
+	// std::cout << GREEN "Waiting for clients ...." RESET << std::endl;
 	
 	while (Server::_Signal == false)
 	{
@@ -134,7 +134,7 @@ void Server::ServerSocket()
 
 void Server::NewClient()
 {
-	Client *newClient = new Client();
+	Client newClient;
 	
 	struct sockaddr_in newClient_addr;
 	struct pollfd NewPoll;
@@ -158,11 +158,11 @@ void Server::NewClient()
 	NewPoll.events = POLLIN;
 	NewPoll.revents = 0;
 	
-	newClient->SetFd(socketFd_newClient);
-	newClient->SetIp(inet_ntoa((newClient_addr.sin_addr)));
-	_Clients.push_back(*newClient);
+	newClient.SetFd(socketFd_newClient);
+	newClient.SetIp(inet_ntoa((newClient_addr.sin_addr)));
 	fds.push_back(NewPoll);
-	FirstCoHandler(socketFd_newClient, newClient);
+	FirstCoHandler(socketFd_newClient, &newClient);
+	_Clients.push_back(newClient);
 }
 
 void Server::ReceiveNewData(int fd)
@@ -186,12 +186,11 @@ void Server::ReceiveNewData(int fd)
 	}
 }
 
-
 void Server::ClearClients(int fd)
 {
 	// Supression d'un client dans la liste. Ex: deconnexion
 	for (std::vector<Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it) // pre-incrementation par convention
-	{																					  // ++it incremente la valeur et retourne 			
+	{																		  // ++it incremente la valeur et retourne 			
 		if (it->GetFd() == fd)														     // la valeur incrementee
 		{
 			_Clients.erase(it);
@@ -221,4 +220,49 @@ void Server::CloseFds()
 		std::cout << YELLOW "Terminating server: Closing the listening socket..." RESET << std::endl;
 		close(this->_ServerSocketFd);
 	}
+}
+
+std::string getCurrentTime()
+{
+	std::time_t result = std::time(0);
+	std::string timeStr(ctime(&result));
+	return timeStr.substr(0, timeStr.size()-1);
+}
+
+void Server::printState()
+{
+	std::cout << std::endl << BLACK << getCurrentTime() << "    " << "Clients connected: " << _Clients.size() << std::endl;
+	std::cout << BLACK << "                       " << "    " << GREEN << "----------------------" << RESET << std::endl;
+	if (!_Clients.empty())
+	{
+		for (std::vector<Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
+		{
+			std::cout << BLACK << "                       " << "    " << "Client nick: " << it->GetNick() << std::endl;
+			std::cout << BLACK << "                       " << "    " << "Client user: " << it->GetUsername() << std::endl;
+			std::cout << BLACK << "                       "<< "    " << "Client fd: " << it->GetFd() << std::endl;
+			if (it != _Clients.end() - 1)
+				std::cout << BLACK << "                           " << GREEN << "-----------" << RESET << std::endl;
+		}
+	}
+	// std::cout << BLACK << getCurrentTime() << "    " << YELLOW << "------------------------" << RESET << std::endl;
+	// std::cout << BLACK << getCurrentTime() << "    " << "Channels: " << _Channels.size() << std::endl;
+	// std::cout << BLACK << getCurrentTime() << "    " << GREEN << "-----------" << RESET << std::endl;
+    // if (_channels.size() > 0)
+    // {
+    //     for (size_t i = 0; i < _channels.size(); i++)
+    //     {
+    //         std::cout << BLACK << getCurrentTime() << "    " << "Channel name: " << _channels[i]->getName() << std::endl;
+    //         std::cout << BLACK << getCurrentTime() << "    " << "Channel topic: " << _channels[i]->getTopic() << std::endl;
+    //         for (size_t i = 0; i < getChannels().size(); i++)
+    //         {
+    //             std::vector<Client *> lst = getChannels()[i]->getUserList();
+    //             for (size_t j = 0; j != lst.size(); j++)
+    //             {
+    //                 std::cout << BLACK << getCurrentTime() << "    " << "Client nick: " << lst[j]->getNick() << std::endl;
+    //             }
+    //         }
+    //         if (i < _channels.size() - 1)
+    //             std::cout << BLACK << getCurrentTime() << "    " << GREEN << "-----------" << RESET << std::endl;
+    //     }
+    // }
 }

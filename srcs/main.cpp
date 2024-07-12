@@ -6,11 +6,19 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:11:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/10 16:11:40 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/11 20:13:50 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Includes/irc.hpp"
+
+//////////////// MONITORING DEBUG ////////
+#include <thread> 						//
+#include <atomic>						//
+#include <mutex>						//	
+std::atomic<bool> running(true);		//
+std::mutex cout_mutex;					//
+//////////////////////////////////////////
 
 int main(int argc, char **argv)
 {
@@ -18,10 +26,23 @@ int main(int argc, char **argv)
 		std::cout << RED "Missing arguments" RESET << std::endl;
 	else
 	{
-		// 0 -> 1023 port reserves (ex: http (80), SSh (22)..)
-		// 1024 -> 49151 plage utilisable
+		///////////////////////// MONITORING DEBUG ////////////////////////////////////////////
 		Server server(std::atoi(argv[1]), argv[2]);
-		std::cout << GREEN "/////////////////////   IRC SERVER   ///////////////////" RESET << std::endl << std::endl;
+		std::thread serverStateThread([&server]()
+		{
+			while (running)
+			{
+				cout_mutex.lock();
+				std::cout << "\033[2J\033[H";
+				std::cout << YELLOW << "================= SERVER STATE =================" << RESET << std::endl;
+				server.printState();
+				cout_mutex.unlock();
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+			}
+		});
+		serverStateThread.detach();
+		//////////////////////////////////////////////////////////////////////////////////////
+		
 		try
 		{
 			signal(SIGINT, Server::SignalHandler);

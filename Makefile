@@ -6,7 +6,7 @@
 #    By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/17 12:10:05 by kprigent          #+#    #+#              #
-#    Updated: 2024/07/10 16:04:49 by kprigent         ###   ########.fr        #
+#    Updated: 2024/07/11 15:52:47 by kprigent         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ CXX = c++
 
 RM = rm -f
 
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -I Includes
+CPPFLAGS = -Wall -Wextra -Werror -std=c++11 -I Includes
 
 NAME = ircserv
 

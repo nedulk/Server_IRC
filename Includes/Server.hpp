@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/10 17:06:41 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/11 18:04:34 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ class Server
 		int _ServerSocketFd; // Utilisation de la fonction socket() qui va return un fd
 							 // Le socket va etre le point final de communication. "Ex: 12.15.45.34:80"
 		
-		std::vector<Client> _Clients; // Ici on va stocker la liste des Clients qui sont connectes sur le serveur.
 		std::vector<struct pollfd> fds; // Ici on va stocker tous les fds des Clients, pour "surveiller".
+		std::vector<Client> _Clients; // Ici on va stocker la liste des Clients qui sont connectes sur le serveur.
 	
 		Client *Cli;
 		static bool _Signal;
@@ -44,8 +44,12 @@ class Server
 		void FirstCoHandler(int fd_newClient, Client *newClient);
 		void PasswordCheck(int fd_newClient);
 		
+		int NickCheck_oc(std::string buff_rr);
+		void NickCheck(int fd_newClient, Client *newClient);
+		
 		void CloseFds();
 		void ClearClients(int fd);
+		void printState();
 };
 		
 #endif		
