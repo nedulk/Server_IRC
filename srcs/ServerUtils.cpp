@@ -16,9 +16,9 @@ int	Server::NickCheck_oc(std::string buff_rr)
 {
 	if (!_Clients.empty())
 	{
-		for(std::vector<Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
+		for(std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
 		{
-			if (it->GetNick() == buff_rr)
+			if ((*it)->GetNick() == buff_rr)
 				return (1);
 		}
 	}
@@ -147,4 +147,31 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 	std::string str(newClient->GetNick());
 	std::string message = std::string(GREEN).append(RPL_WELCOME(str)).append("\n").append(RESET);
 	send(fd_newClient, message.c_str(), message.size(), 0);
+}
+
+std::map<std::string, Channel*> Server::getChannelList() {
+	return (_channelList);
+}
+
+void Server::createChannel(Client *oper, std::string &channelName, std::string key)
+{
+	try
+	{
+		Channel	*newChannel = new Channel(channelName);
+
+		if (!key.empty())
+		{
+			newChannel->setKey(key);
+			newChannel->setIsChannelKey(true);
+		}
+		newChannel->addOperator(oper);
+		newChannel->addUser(oper);
+		_channelList[channelName] = newChannel;
+		std::cout << "Channel " + channelName + "successfully created" << std::endl;
+		std::cout << "User " + oper->GetNick() + "successfully joined" << std::endl;
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 }

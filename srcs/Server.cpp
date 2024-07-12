@@ -135,7 +135,7 @@ void Server::ServerSocket()
 
 void Server::NewClient()
 {
-	Client newClient;
+	Client *newClient = new Client();
 	
 	struct sockaddr_in newClient_addr;
 	struct pollfd NewPoll;
@@ -159,11 +159,11 @@ void Server::NewClient()
 	NewPoll.events = POLLIN;
 	NewPoll.revents = 0;
 	
-	newClient.SetFd(socketFd_newClient);
-	newClient.SetIp(inet_ntoa((newClient_addr.sin_addr)));
+	newClient->SetFd(socketFd_newClient);
+	newClient->SetIp(inet_ntoa((newClient_addr.sin_addr)));
 	fds.push_back(NewPoll);
-	std::cout << ITALIC "New client [" << newClient.GetIp() << "]" << " [" << newClient.GetFd() << "]" RESET << std::endl;
-	FirstCoHandler(socketFd_newClient, &newClient);
+	std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET << std::endl;
+	FirstCoHandler(socketFd_newClient, newClient);
 	_Clients.push_back(newClient);
 }
 
@@ -183,17 +183,42 @@ void Server::ReceiveNewData(int fd)
 	}
 	else
 	{
-		 buff[bytes] = '\0';
-		 std::cout << BLUE "Client |" << fd << "| : " RESET << buff;
+		buff[bytes] = '\0';
+		std::string tmpStr = buff;
+		if (tmpStr == "privmsgtest1")
+		{
+			std::string name = "test";
+			std::string msg = "bla";
+			Command::privMsg(*this, getClientByFd(fd), name, msg);
+		}
+		if (tmpStr == "privmsgtest2")
+		{
+			std::string name = "#chan1";
+			std::string msg = "message on chan1";
+			Command::privMsg(*this, getClientByFd(fd), name, msg);
+		}
+		if (tmpStr == "jointest1")
+		{
+			std::string	channelName = "#chan1";
+			std::string	channelKey = "key";
+			Command::join(*this, getClientByFd(fd), channelName, channelKey);
+		}
+		if (tmpStr == "jointest2")
+		{
+			std::string	channelName = "#chan1";
+			std::string	channelKey = "key";
+			Command::join(*this, getClientByFd(fd), channelName, channelKey);
+		}
+		std::cout << BLUE "Client |" << fd << "| : " RESET << buff;
 	}
 }
 
 void Server::ClearClients(int fd)
 {
 	// Supression d'un client dans la liste. Ex: deconnexion
-	for (std::vector<Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it) // pre-incrementation par convention
+	for (std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); ++it) // pre-incrementation par convention
 	{																		  // ++it incremente la valeur et retourne 			
-		if (it->GetFd() == fd)														     // la valeur incrementee
+		if ((*it)->GetFd() == fd)														     // la valeur incrementee
 		{
 			_Clients.erase(it);
 			break ;
@@ -215,7 +240,7 @@ void Server::CloseFds()
 	std::cout <<  YELLOW "Disconnecting all clients ..." RESET << std::endl;
 	for (size_t i = 0; i < _Clients.size() ; i++)
 	{
-		close(_Clients[i].GetFd());
+		close(_Clients[i]->GetFd());
 	}
 	if (this->_ServerSocketFd != -1)
 	{
@@ -237,11 +262,11 @@ void Server::printState()
 	std::cout << BLACK << "                       " << "    " << GREEN << "----------------------" << RESET << std::endl;
 	if (!_Clients.empty())
 	{
-		for (std::vector<Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
+		for (std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
 		{
-			std::cout << BLACK << "                       " << "    " << "Client nick: " << it->GetNick() << std::endl;
-			std::cout << BLACK << "                       " << "    " << "Client user: " << it->GetUsername() << std::endl;
-			std::cout << BLACK << "                       "<< "    " << "Client fd: " << it->GetFd() << std::endl;
+			std::cout << BLACK << "                       " << "    " << "Client nick: " << (*it)->GetNick() << std::endl;
+			std::cout << BLACK << "                       " << "    " << "Client user: " << (*it)->GetUsername() << std::endl;
+			std::cout << BLACK << "                       "<< "    " << "Client fd: " << (*it)->GetFd() << std::endl;
 			if (it != _Clients.end() - 1)
 				std::cout << BLACK << "                           " << GREEN << "-----------" << RESET << std::endl;
 		}
@@ -269,36 +294,48 @@ void Server::printState()
     // }
 }
 
-Client &Server::getClientByName(std::string name)
+Client *Server::getClientByName(std::string name)
 {
-	for (std::vector<Client>::iterator it = _Clients.begin(); it != _Clients.end(); it++)
+	for (std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); it++)
 	{
-		if (it->GetNick() == name)
+		if ((*it)->GetNick() == name)
 			return (*it);
 	}
 	throw (std::runtime_error("Client not found"));
 }
 
-//void Server::broadcastMsg(std::string& msg, std::string& channelName, Client& sender)
-//{
-//	try
-//	{
-//		Channel&	channel = _channelList.at(channelName);
-//		if (channel.getUserList().count(sender.GetFd()) == 0)
-//		{
-//			std::cerr << RED << sender.GetNick() << " not in channel " << channelName << RESET << std::endl;
-//			return ;
-//		}
-//		for (std::map<int, Client*>::iterator it = channel.getUserList().begin();
-//			it != channel.getUserList().end();
-//			it++)
-//		{
-//			if (it->second->GetFd() != sender.GetFd())
-//				send(it->second->GetFd(), msg.c_str(), msg.size(), 0);
-//		}
-//	}
-//	catch (std::exception& e)
-//	{
-//		std::cerr << RED "Channel '" << channelName <<  "' doesn't exist" RESET << std::endl;
-//	}
-//}
+Client *Server::getClientByFd(int fd)
+{
+	for (std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); it++)
+	{
+		if ((*it)->GetFd() == fd)
+			return (*it);
+	}
+	throw (std::runtime_error("Client not found"));
+}
+
+void Server::broadcastMsg(std::string& msg, std::string& channelName, Client& sender)
+{
+	try
+	{
+		Channel	*channel = _channelList.at(channelName);
+		if (channel->getUserList().count(sender.GetFd()) == 0)
+		{
+			std::cerr << RED << sender.GetNick() << " not in channel " << channelName << RESET << std::endl;
+			return ;
+		}
+
+		std::map<int, Client*> userList = channel->getUserList();
+		for (std::map<int, Client*>::iterator it = userList.begin();
+			it != userList.end();
+			it++)
+		{
+			if (it->second->GetFd() != sender.GetFd())
+				send(it->second->GetFd(), msg.c_str(), msg.size(), 0);
+		}
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << RED "Channel '" << channelName <<  "' doesn't exist" RESET << std::endl;
+	}
+}

@@ -18,10 +18,9 @@
 class Command
 {
 private:
-	static void	privMsg(Server& server, Client& sender, std::string& receiver, std::string& msg);
-	static void	join(Server& server, Client& sender, std::string& channel, std::string& key);
-
 public:
+	static void	join(Server& server, Client* sender, std::string& channel, std::string key);
+	static void	privMsg(Server& server, Client* sender, std::string& receiver, std::string& msg);
 	static void	execCmd(Server& server, int cmdName, Client& sender, std::vector<std::string> args);
 };
 

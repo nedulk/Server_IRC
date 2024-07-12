@@ -59,20 +59,6 @@
 # define BWHITE "\033[1;37m"
 # define BRESET "\033[1;0m"
 
-enum {
-	USER,
-	NICK,
-	PASS,
-	QUIT,
-	PRIVMSG,
-	JOIN,
-	PART,
-	MODE,
-	TOPIC,
-	INVITE,
-	KICK,
-};
-
 /////////////////////////////////// ERROR MSG //////////////////////////////////////////////////////////
 # define ERR_NOSUCHNICK(input, nick)			"401 " + input + " " + nick + " :No such nick/channel"
 # define ERR_NOSUCHCHANNEL(input, chan)			"403 " + input + " " + chan + " :No such channel"

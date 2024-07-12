@@ -119,3 +119,13 @@ void Client::UserCheck(int fd_newClient)
 	}	
 }
 
+bool Client::isInvitedToChannel(std::string& channelName)
+{
+	for (std::vector<std::string>::iterator it = _channelInvites.begin(); it != _channelInvites.end(); it++)
+	{
+		if (*it == channelName)
+			return (true);
+	}
+	return (false);
+}
+

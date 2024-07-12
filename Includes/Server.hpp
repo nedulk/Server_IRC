@@ -16,6 +16,7 @@
 # include "irc.hpp"
 
 class Client;
+class Channel;
 // La class Server possede toutes les informations du serveur.
 
 class Server
@@ -28,8 +29,8 @@ class Server
 							 // Le socket va etre le point final de communication. "Ex: 12.15.45.34:80"
 		
 		std::vector<struct pollfd> fds; // Ici on va stocker tous les fds des Clients, pour "surveiller".
-		std::vector<Client> _Clients; // Ici on va stocker la liste des Clients qui sont connectes sur le serveur.
-//		std::map<std::string, Channel>	_channelList;
+		std::vector<Client*> _Clients; // Ici on va stocker la liste des Clients qui sont connectes sur le serveur.
+		std::map<std::string, Channel*>	_channelList;
 
 		Client *Cli;
 		static bool _Signal;
@@ -52,8 +53,11 @@ class Server
 		void ClearClients(int fd);
 		void printState();
 
-		Client&	getClientByName(std::string name);
-		Client&	getClientByFd(int fd);
+		Client*	getClientByName(std::string name);
+		Client*	getClientByFd(int fd);
+
+		std::map<std::string, Channel*>	getChannelList();
+		void	createChannel(Client* oper, std::string& channelName, std::string key);
 		void broadcastMsg(std::string &msg, std::string &channelName, Client &sender);
 };
 		

@@ -30,6 +30,8 @@ class Client
 		std::string _Hostname;
 		std::string _Realname;
 
+		std::vector<std::string>	_channelInvites;
+
 		// Server *Serv;
 	public:
 		Client();
@@ -54,7 +56,7 @@ class Client
 		void SetRealname(std::string realname);
 		std::string GetRealname();
 
-		
+		bool	isInvitedToChannel(std::string& channelName);
 };
 
 #endif
