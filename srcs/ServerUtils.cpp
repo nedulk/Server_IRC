@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 12:04:48 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 13:57:53 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 	std::cout << "USER cmd [OK]" << std::endl;
 
 	std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
-	std::cout << BGREEN " connected" RESET << " ✔️" << std::endl;
+	std::cout << BGREEN " connected ✔️" RESET << std::endl;
 	
 	//WELCOME MSG -> to client 
 	std::string str(newClient->GetNick());
