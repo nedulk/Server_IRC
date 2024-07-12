@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 11:08:39 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 16:11:24 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,15 @@
 # define RPL_ENDOFNAMES(input, chan)				"366 " + input + " " + chan + " :End of /NAMES list"
 
 //////////////REGEX -PARSING- //////////////////////////
-# define REGEXNICKNAME "^[a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
-# define REGEXUSER "USER *0 *\\* *: *[a-zA-Z]{1,9}"
+# define NICK "^[a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
+# define USER "USER *0 *\\* *: *[a-zA-Z]{1,9}"
+# define PRIVMSG "^PRIVMSG\n$"
+# define JOIN "^JOIN\n$"
+# define MODE "^MODE\n$"
+# define TOPIC "^TOPIC\n$"
+# define INVITE "^INVITE\n$"
+# define KICK "^KICK\n$"
+# define QUIT "^QUIT\n$"
 
 # include "Server.hpp"
 # include "Client.hpp"

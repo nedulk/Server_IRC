@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 11:42:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/10 11:43:47 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 16:10:35 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ class Command
 {
 private:
 public:
+	static std::string RegexCmd(std::string buff);
+	static void execCmd(std::string cmd);
 	static void	join(Server& server, Client* sender, std::string& channel, std::string key);
 	static void	privMsg(Server& server, Client* sender, std::string& receiver, std::string& msg);
 	static void	execCmd(Server& server, int cmdName, Client& sender, std::vector<std::string> args);

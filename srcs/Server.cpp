@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 11:56:57 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/12 16:47:10 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,11 @@ void Server::ReceiveNewData(int fd)
 			Command::join(*this, getClientByFd(fd), channelName, channelKey);
 		}
 		std::cout << BLUE "Client |" << fd << "| : " RESET << buff;
+		// std::string regex = Command->RegexCmd(buff);
+		// if (!regex.empty())
+		// {	
+		// 	Command->execCmd(regex);
+		// }
 	}
 }
 
