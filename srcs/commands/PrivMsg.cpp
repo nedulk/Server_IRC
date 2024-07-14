@@ -4,16 +4,42 @@
 
 #include "Command.hpp"
 
-void Command::privMsg(Server& server, Client* sender, std::string &receiverName, std::string &msg)
+void Command::privMsg(Server& server, Client& client, std::vector<std::string> args)
 {
-	//needs to check if receiver is channel or user
 	try
 	{
-		std::string	finalMsg = sender->GetNick() + "!" + sender->GetNick()
-								  + "@hostname PRIVMSG " + sender->GetNick() + " : " + msg;
-		Client* receiverClient = server.getClientByName(receiverName);
+		std::vector<std::string> receiverNames;
+		std::string msg;
+		bool isMsg = false;
 
-		send(receiverClient->GetFd(), finalMsg.c_str(), finalMsg.size(), 0);
+		for (std::vector<std::string>::iterator it = args.begin(); it != args.end(); ++it)
+		{
+			size_t pos = it->find(":");
+			if (isMsg)
+			{
+				msg += *it;
+				if ((it + 1) != args.end())
+					msg += " ";
+			}
+			else if (pos != std::string::npos)
+			{
+				if (pos > 0)
+					receiverNames.push_back(it->substr(0, pos));
+				msg = it->substr(pos + 1);
+				isMsg = true;
+				msg += " ";
+			}
+			else
+				receiverNames.push_back(*it);
+		}
+		for (std::vector<std::string>::iterator it = receiverNames.begin() + 1; it != receiverNames.end(); ++it)
+		{
+			std::string finalMsg = client.GetNick() + "!" + client.GetNick()
+										+ "@hostname PRIVMSG " + *it + ": " + msg;
+			Client* receiverClient = server.getClientByName(*it);
+
+			send(receiverClient->GetFd(), finalMsg.c_str(), finalMsg.size(), 0);
+		}
 	}
 	catch (std::exception& e)
 	{

@@ -4,10 +4,42 @@
 
 #include "irc.hpp"
 
+std::vector<std::string> Command::GetCmdArgs(std::string buff)
+{
+    std::vector<std::string> args;
+    std::string::size_type start = 0;
+    std::string::size_type end = buff.find(" ");
+
+    while (end != std::string::npos) 
+	{
+        args.push_back(buff.substr(start, end - start));
+        start = end + 1;
+        end = buff.find(" ", start);
+    }
+    args.push_back(buff.substr(start));
+
+	////// DEBUG pour voir les arguments d'une commande //////
+	// std::cout << "cmd args: \n";
+	// for(std::vector<std::string>::iterator it = args.begin(); it != args.end(); ++it)
+	// {
+	// 	std::cout << *it << std::endl;
+	// }
+    return (args);
+}
+
 std::string Command::RegexCmd(std::string buff)
 {
-	std::vector <std::string> Regex_vector = {NICK, USER, QUIT, PRIVMSG, JOIN,
-		MODE, TOPIC, INVITE, KICK, QUIT};
+	std::vector<std::string> Regex_vector;
+	Regex_vector.push_back(NICK);
+	Regex_vector.push_back(USER);
+	Regex_vector.push_back(QUIT);
+	Regex_vector.push_back(PRIVMSG);
+	Regex_vector.push_back(JOIN);
+	Regex_vector.push_back(MODE);
+	Regex_vector.push_back(TOPIC);
+	Regex_vector.push_back(INVITE);
+	Regex_vector.push_back(KICK);
+	Regex_vector.push_back(QUIT);
 	
 	regex_t regex;
 	int ret;
@@ -26,41 +58,42 @@ std::string Command::RegexCmd(std::string buff)
 	return ("");
 }
 
-void Command::execCmd(std::string cmd)
+void Command::execCmd(Server& server, Client& client, std::string cmdName, std::vector<std::string> args)
 {
-	if (cmd == QUIT)
+	if (cmdName == QUIT)
 	{
 		std::cout << YELLOW "QUIT cmd detected" RESET << std::endl;
+		quitCmd(server, client, args);
 		return ;
 	}
-	else if(cmd == PRIVMSG)
+	else if(cmdName == PRIVMSG)
 	{
 		std::cout << YELLOW "PRIVMSG cmd detected" RESET << std::endl;
-		// privMsg(server, sender, args[0], args[1]);
+		privMsg(server, client, args);
 		return ;
 	}
-	else if (cmd == JOIN)
+	else if (cmdName == JOIN)
 	{	
 		std::cout <<  YELLOW "JOIN cmd detected" RESET << std::endl;
 		// privMsg(server, sender, args[0], args[1]);
 		return ;
 	}
-	else if (cmd == MODE)
+	else if (cmdName == MODE)
 	{
 		std::cout << YELLOW "MODE cmd detected" RESET << std::endl;
 		return ;
 	}
-	else if (cmd == TOPIC)
+	else if (cmdName == TOPIC)
 	{
 		std::cout << YELLOW "TOPIC cmd detected" RESET << std::endl;
 		return ;
 	}
-	else if (cmd == INVITE)
+	else if (cmdName == INVITE)
 	{
 		std::cout << YELLOW "INVITE cmd detected" RESET << std::endl;
 		return ;
 	}
-	else if (cmd == KICK)
+	else if (cmdName == KICK)
 	{
 		std::cout << YELLOW "KICK cmd detected" RESET << std::endl;
 		return ;

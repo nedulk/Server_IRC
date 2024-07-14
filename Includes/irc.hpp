@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 16:11:24 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/14 17:32:58 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,13 +101,13 @@
 //////////////REGEX -PARSING- //////////////////////////
 # define NICK "^[a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
 # define USER "USER *0 *\\* *: *[a-zA-Z]{1,9}"
-# define PRIVMSG "^PRIVMSG\n$"
+# define PRIVMSG "^PRIVMSG (([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+:([a-zA-Z ]{0,100})\n$"
 # define JOIN "^JOIN\n$"
 # define MODE "^MODE\n$"
 # define TOPIC "^TOPIC\n$"
 # define INVITE "^INVITE\n$"
 # define KICK "^KICK\n$"
-# define QUIT "^QUIT\n$"
+# define QUIT "^QUIT :[a-zA-Z0-9 ]{0,50}\n$"
 
 # include "Server.hpp"
 # include "Client.hpp"

@@ -6,18 +6,18 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:11:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 11:35:25 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/14 16:45:00 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "irc.hpp"
 
 //////////////// MONITORING DEBUG ////////
-#include <thread> 						//
-#include <atomic>						//
-#include <mutex>						//	
-std::atomic<bool> running(true);		//
-std::mutex cout_mutex;					//
+// #include <thread> 						//
+// #include <atomic>						//
+// #include <mutex>						//	
+// std::atomic<bool> running(true);		//
+// std::mutex cout_mutex;					//
 //////////////////////////////////////////
 
 int main(int argc, char **argv)

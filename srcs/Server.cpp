@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 16:47:10 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/14 18:23:23 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,37 +184,38 @@ void Server::ReceiveNewData(int fd)
 	else
 	{
 		buff[bytes] = '\0';
-		std::string tmpStr = buff;
-		if (tmpStr == "privmsgtest1")
-		{
-			std::string name = "test";
-			std::string msg = "bla";
-			Command::privMsg(*this, getClientByFd(fd), name, msg);
-		}
-		if (tmpStr == "privmsgtest2")
-		{
-			std::string name = "#chan1";
-			std::string msg = "message on chan1";
-			Command::privMsg(*this, getClientByFd(fd), name, msg);
-		}
-		if (tmpStr == "jointest1")
-		{
-			std::string	channelName = "#chan1";
-			std::string	channelKey = "key";
-			Command::join(*this, getClientByFd(fd), channelName, channelKey);
-		}
-		if (tmpStr == "jointest2")
-		{
-			std::string	channelName = "#chan1";
-			std::string	channelKey = "key";
-			Command::join(*this, getClientByFd(fd), channelName, channelKey);
-		}
-		std::cout << BLUE "Client |" << fd << "| : " RESET << buff;
-		// std::string regex = Command->RegexCmd(buff);
-		// if (!regex.empty())
-		// {	
-		// 	Command->execCmd(regex);
+		// std::string tmpStr = buff;
+		// if (tmpStr == "privmsgtest1")
+		// {
+		// 	std::string name = "test";
+		// 	std::string msg = "bla";
+		// 	Command::privMsg(*this, getClientByFd(fd), name, msg);
 		// }
+		// if (tmpStr == "privmsgtest2")
+		// {
+		// 	std::string name = "#chan1";
+		// 	std::string msg = "message on chan1";
+		// 	Command::privMsg(*this, getClientByFd(fd), name, msg);
+		// }
+		// if (tmpStr == "jointest1")
+		// {
+		// 	std::string	channelName = "#chan1";
+		// 	std::string	channelKey = "key";
+		// 	Command::join(*this, getClientByFd(fd), channelName, channelKey);
+		// }
+		// if (tmpStr == "jointest2")
+		// {
+		// 	std::string	channelName = "#chan1";
+		// 	std::string	channelKey = "key";
+		// 	Command::join(*this, getClientByFd(fd), channelName, channelKey);
+		// }
+		std::string regex = Command->RegexCmd(buff);
+		if (!regex.empty())
+		{	
+			Command->execCmd(*this, *getClientByFd(fd),regex, Command->GetCmdArgs(buff));
+		}
+		//// DEBUG bytes received ///////
+		// std::cout << BLUE "Client |" << fd << "| : " RESET << buff;
 	}
 }
 
