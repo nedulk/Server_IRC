@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/15 15:44:35 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/15 17:14:50 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void Server::PasswordCheck(int fd_newClient)
 			else 
 			{
 				std::string buff_rr_str(buff_rr);
-				std::string message = std::string(RED).append(ERR_PASSWDMISMATCH(buff_rr_str)).append("\n").append(RESET);
+				std::string message = std::string(RED).append(ERR_PASSWDMISMATCH).append("\n").append(RESET);
 				send(fd_newClient, message.c_str(), message.size(), 0);
 				for (int i = 0; i < 1024; i++)
 					buff_r[i] = '\0';
@@ -145,7 +145,8 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 	std::cout << BGREEN " connected ✔️" RESET << std::endl;
 	
 	//WELCOME MSG -> to client 
-	std::string message = std::string(GREEN).append(RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), "hostname")).append("\n").append(RESET);
+	std::string message = std::string(GREEN) + RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), "hostname") + "\n"
+		+ RPL_YOURHOST("RCI", "1.2.5") + "\n" + RPL_CREATED("today") + "\n" + RPL_MYINFO("RCI", "1.2.5", "i/t/k/o/l", "...") + "\n" + (RESET);
 	send(fd_newClient, message.c_str(), message.size(), 0);
 }
 

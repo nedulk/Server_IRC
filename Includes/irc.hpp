@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/15 14:31:55 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/15 17:37:30 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@
 # define ERR_CANNOTSENDTOCHAN(input, chan)		"404 " + input + " " + chan + " :Cannot send to channel"
 # define ERR_NOORIGIN(input)					"409 " + input + " :No origin specified"
 # define ERR_NORECIPIENT(input)					"411 " + input + " :No recipient given"
-# define ERR_NOTEXTTOSEND(input)				"412 " + input + " :No text to send"
+# define ERR_NOTEXTTOSEND						RED "412 :No text to send\n" RESET
 # define ERR_UNKNOWNCOMMAND(input, cmd)			"421 " + input + " " + cmd + " :Unknown command"
 # define ERR_NONICKNAMEGIVEN(input)				"431 " + input + " :No nickname given"
 # define ERR_ERRONEUSNICKNAME(nick)				"432 " + nick + " :Erroneous nickname"
@@ -76,7 +76,7 @@
 # define ERR_NOTREGISTERED(input)				"451 " + input + " :You have not registered"
 # define ERR_NEEDMOREPARAMS(input, cmd)			"461 " + input + " " + cmd + " :Not enough parameters"
 # define ERR_ALREADYREGISTRED(input)			"462 " + input + " :Unauthorized command (already registered)"
-# define ERR_PASSWDMISMATCH(input)				"464 " + input + " :Password incorrect"
+# define ERR_PASSWDMISMATCH						"464 :Password incorrect"
 # define ERR_CHANNELISFULL(input, chan)			"471 " + input + " " + chan + " :Cannot join channel (+l)"
 # define ERR_UNKNOWNMODE(input, mode)			"472 " + input + " " + mode + " :is unknown mode char to me"
 # define ERR_INVITEONLYCHAN(input, chan)		"473 " + input + " " + chan + " :Cannot join channel (+i)"
@@ -86,8 +86,9 @@
 
 //////////////////////////////// SERVER REPLY /////////////////////////////////////////////////////////////////////
 # define RPL_WELCOME(nick, user, host)				"001 " "Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host
-# define RPL_YOURHOST(input, serv, ver)				"002 " + input + " :Your host is " + serv + ", running version " + ver
-# define RPL_CREATED(input, date)					"003 " + input + " :This server was created " + date
+# define RPL_YOURHOST(serv, ver)					"002 Your host is " + serv + ", running version " + ver
+# define RPL_CREATED(date)							"003 This server was created " + date
+# define RPL_MYINFO(serv, ver, channelmods, usermods) "004 " + serv + ver + channelmods + usermods
 # define RPL_LISTSTART(input)						"321 " + input + " Channel :Users  Name"
 # define RPL_LIST(input, chan, users, topic)		"322 " + input + " " + chan + " " + users + " :" + topic
 # define RPL_LISTEND(input)							"323 " + input + " :End of /LIST"
@@ -98,7 +99,7 @@
 # define RPL_NAMREPLY(input, chan, nicks)			"353 " + input + " = " + chan + " :" + nicks
 # define RPL_ENDOFNAMES(input, chan)				"366 " + input + " " + chan + " :End of /NAMES list"
 
-//////////////REGEX -PARSING- //////////////////////////
+////////////// REGEX -PARSING- //////////////////////////
 # define NICK "^[a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
 # define USER "USER *0 *\\* *: *[a-zA-Z]{1,9}"
 # define PRIVMSG "^PRIVMSG (([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+:([a-zA-Z ]{0,100})\n$"

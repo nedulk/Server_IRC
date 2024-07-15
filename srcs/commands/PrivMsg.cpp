@@ -32,13 +32,27 @@ void Command::privMsg(Server& server, Client& client, std::vector<std::string> a
 			else
 				receiverNames.push_back(*it);
 		}
-		for (std::vector<std::string>::iterator it = receiverNames.begin() + 1; it != receiverNames.end(); ++it)
+		bool onlyWhitespace = true;
+		for (std::string::const_iterator it = msg.begin(); it != msg.end(); ++it)
 		{
-			std::string finalMsg = client.GetNick() + "!" + client.GetNick()
-										+ "@hostname PRIVMSG " + *it + ": " + msg;
-			Client* receiverClient = server.getClientByName(*it);
+			if (*it != ' ' && *it != '\t' && *it != '\n')
+			{
+				onlyWhitespace = false;
+				break;
+			}
+		}
+		if (onlyWhitespace)
+			send(client.GetFd(), ERR_NOTEXTTOSEND, strlen(ERR_NOTEXTTOSEND), 0);
+		else
+		{
+			for (std::vector<std::string>::iterator it = receiverNames.begin() + 1; it != receiverNames.end(); ++it)
+			{
+				std::string finalMsg = client.GetNick() + "!" + client.GetNick()
+											+ "@hostname PRIVMSG " + *it + ": " + msg;
+				Client* receiverClient = server.getClientByName(*it);
 
-			send(receiverClient->GetFd(), finalMsg.c_str(), finalMsg.size(), 0);
+				send(receiverClient->GetFd(), finalMsg.c_str(), finalMsg.size(), 0);
+			}
 		}
 	}
 	catch (std::exception& e)
