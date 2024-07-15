@@ -51,7 +51,10 @@ std::string Command::RegexCmd(std::string buff)
 		{	
 			ret = regexec(&regex, buff.c_str(), 0, NULL, 0);
 			if (ret == 0)
+			{
+				regfree(&regex);
 				return(*it);
+			}
 		}
 		regfree(&regex);
 	}

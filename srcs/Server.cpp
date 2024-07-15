@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/14 18:23:23 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/15 15:54:08 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,8 @@ void Server::ReceiveNewData(int fd)
 
 	if (bytes <= 0) // le client est deco
 	{
-		std::cout << RED "Client |" << fd << "| disconnected" RESET << std::endl;
+		std::cout << ITALIC "Client [" << getClientByFd(fd)->GetIp() << "]" << " [" << fd << "]" RESET;
+		std::cout << BRED " disconnected ×" RESET << std::endl;
 		ClearClients(fd);
 		close(fd);
 	}
@@ -227,6 +228,7 @@ void Server::ClearClients(int fd)
 		if ((*it)->GetFd() == fd)														     // la valeur incrementee
 		{
 			_Clients.erase(it);
+			delete *it;
 			break ;
 		}
 	}

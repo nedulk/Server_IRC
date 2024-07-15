@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:36:18 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 15:06:38 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/15 15:45:29 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,41 +82,47 @@ std::string Client::GetRealname()
 
 void Client::UserCheck(int fd_newClient)
 {
-	char buff_r[1024];
-	for (int i = 0; i < 1024; i++)
-		buff_r[i] = '\0';
-	
-	while (1)
-	{
-		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
-		regex_t regex;
-		int ret;
-		ret = regcomp(&regex, USER, REG_EXTENDED);
-		if (!ret)
-		{	
-			ret = regexec(&regex, buff_r, 0, NULL, 0);
-			if (!ret)
-			{
-				char *buff_rr = buff_r;
-				while(*buff_rr != ':')
-					buff_rr++;
-				buff_rr++;
-				char *p = buff_rr;
-				while (*p != '\0')
-				{
-					if (*p == '\n')
-					{
-						*p = '\0';
-						break;
-					}
-					p++;
-				}
-				SetUsername(buff_rr);
-				break ;
-			}
+    char buff_r[1024];
+    for (int i = 0; i < 1024; i++)
+        buff_r[i] = '\0';
+    
+    regex_t regex;
+    while (1)
+    {
+        recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+        int ret;
+        ret = regcomp(&regex, USER, REG_EXTENDED);
+		if (ret < 0)
+		{
+			regfree(&regex);
+			return ;
 		}
-		regfree(&regex);
-	}	
+        if (!ret)
+        {	
+            ret = regexec(&regex, buff_r, 0, NULL, 0);
+            if (!ret)
+            {
+                char *buff_rr = buff_r;
+                while(*buff_rr != ':')
+                    buff_rr++;
+                buff_rr++;
+                char *p = buff_rr;
+                while (*p != '\0')
+                {
+                    if (*p == '\n')
+                    {
+                        *p = '\0';
+                        break;
+                    }
+                    p++;
+                }
+                SetUsername(buff_rr);
+				regfree(&regex);
+                break ;
+            }
+        }
+    	regfree(&regex);
+    }	
 }
 
 bool Client::isInvitedToChannel(std::string& channelName)

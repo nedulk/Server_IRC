@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 15:21:35 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/15 15:44:35 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 	for (int i = 0; i < 1024; i++)
 		buff_r[i] = '\0';
 	
+	regex_t regex;
 	while (1)
 	{
 		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
@@ -51,7 +52,6 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 			}
 			if (NickCheck_oc(buff_rr) == 0)
 			{	
-				regex_t regex;
 				int ret;
 				ret = regcomp(&regex, NICK, REG_EXTENDED);
 				if (!ret)
@@ -84,6 +84,7 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 			}
 		}
 	}
+	regfree(&regex);
 }
 
 void Server::PasswordCheck(int fd_newClient)
@@ -144,8 +145,7 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 	std::cout << BGREEN " connected ✔️" RESET << std::endl;
 	
 	//WELCOME MSG -> to client 
-	std::string str(newClient->GetNick());
-	std::string message = std::string(GREEN).append(RPL_WELCOME(str)).append("\n").append(RESET);
+	std::string message = std::string(GREEN).append(RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), "hostname")).append("\n").append(RESET);
 	send(fd_newClient, message.c_str(), message.size(), 0);
 }
 

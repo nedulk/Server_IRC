@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/14 17:32:58 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/15 14:31:55 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@
 # define ERR_CHANOPRIVSNEEDED(input, chan)
 
 //////////////////////////////// SERVER REPLY /////////////////////////////////////////////////////////////////////
-# define RPL_WELCOME(input)							"001 " + input + " :Welcome " + input + "!"
+# define RPL_WELCOME(nick, user, host)				"001 " "Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host
 # define RPL_YOURHOST(input, serv, ver)				"002 " + input + " :Your host is " + serv + ", running version " + ver
 # define RPL_CREATED(input, date)					"003 " + input + " :This server was created " + date
 # define RPL_LISTSTART(input)						"321 " + input + " Channel :Users  Name"
