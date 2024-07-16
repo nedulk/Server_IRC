@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 11:43:28 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 12:25:12 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,6 @@
 # define BRESET "\033[1;0m"
 
 /////////////////////////////////// ERROR MSG //////////////////////////////////////////////////////////
-# define ERR_NOSUCHNICK(input, nick)			"401 " + input + " " + nick + " :No such nick/channel"
-# define ERR_NOSUCHCHANNEL(input, chan)			"403 " + input + " " + chan + " :No such channel"
-# define ERR_CANNOTSENDTOCHAN(input, chan)		"404 " + input + " " + chan + " :Cannot send to channel"
-# define ERR_NOORIGIN(input)					"409 " + input + " :No origin specified"
-# define ERR_NORECIPIENT(input)					"411 " + input + " :No recipient given"
 # define ERR_NOTEXTTOSEND						RED "412 :No text to send\n" RESET
 # define ERR_UNKNOWNCOMMAND(cmd)				"421 " + cmd + " :Unknown command\n"
 # define ERR_NONICKNAMEGIVEN					"431 :No nickname given\n"
@@ -72,6 +67,11 @@
 # define ERR_ERRONEUSNICKNAME(nick)				"432 " + nick + " :Erroneous nickname"
 # define ERR_NICKNAMEINUSE(nick)				"433 * " + nick + " :Nickname is already in use"
 
+# define ERR_NOSUCHNICK(input, nick)			"401 " + input + " " + nick + " :No such nick/channel"
+# define ERR_NOSUCHCHANNEL(input, chan)			"403 " + input + " " + chan + " :No such channel"
+# define ERR_CANNOTSENDTOCHAN(input, chan)		"404 " + input + " " + chan + " :Cannot send to channel"
+# define ERR_NOORIGIN(input)					"409 " + input + " :No origin specified"
+# define ERR_NORECIPIENT(input)					"411 " + input + " :No recipient given"
 # define ERR_USERNOTINCHANNEL(input, nick, chn)	"441 " + input + " " + nick + " " + chn + " :They aren't on that channel"
 # define ERR_NOTONCHANNEL(input, chan)			"442 " + input + " " + chan + " :You're not on that channel"
 # define ERR_USERONCHANNEL(input, nick, chan)	"443 " + input + " " + nick + " " + chan + " :is already on channel"

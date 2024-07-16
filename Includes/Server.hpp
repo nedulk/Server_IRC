@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/14 15:52:25 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 12:37:09 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class Server
 		
 		int NickCheck_oc(std::string buff_rr);
 		void NickCheck(int fd_newClient, Client *newClient);
+		void UserCheck(int fd_new_client, Client *newClient);
 		
 		Command *Command;
 		

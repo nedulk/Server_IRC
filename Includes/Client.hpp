@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 16:46:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/12 11:51:40 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 12:38:10 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ class Client
 
 		void SetUsername(std::string username);
 		std::string GetUsername();
-		void UserCheck(int fd_newClient);
 
 		void SetHostname(std::string hostname);
 		std::string GetHostname();

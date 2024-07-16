@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 12:10:36 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 12:38:42 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 	regex_t regex;
 	while (1)
 	{
+		if (Server::_Signal == true)
+			exit(0);
 		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
 		if (std::strncmp(buff_r, "NICK ", 5) == 0)
 		{
@@ -132,19 +134,66 @@ void Server::PasswordCheck(int fd_newClient)
 	}	
 }
 
+void Server::UserCheck(int fd_newClient, Client *newClient)
+{
+    char buff_r[1024];
+    for (int i = 0; i < 1024; i++)
+        buff_r[i] = '\0';
+    
+    regex_t regex;
+    while (1)
+    {
+        if (Server::_Signal == true)
+			exit(0);
+        recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+        int ret;
+        ret = regcomp(&regex, USER, REG_EXTENDED);
+		if (ret < 0)
+		{
+			regfree(&regex);
+			return ;
+		}
+        if (!ret)
+        {	
+            ret = regexec(&regex, buff_r, 0, NULL, 0);
+            if (!ret)
+            {
+                char *buff_rr = buff_r;
+                while(*buff_rr != ':')
+                    buff_rr++;
+                buff_rr++;
+                char *p = buff_rr;
+                while (*p != '\0')
+                {
+                    if (*p == '\n')
+                    {
+                        *p = '\0';
+                        break;
+                    }
+                    p++;
+                }
+                newClient->SetUsername(buff_rr);
+                regfree(&regex);
+                break ;
+            }
+        }
+    	regfree(&regex);
+    }	
+}
+
 void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 {
 	//PASS
 	PasswordCheck(fd_newClient);
-	std::cout << "PASS cmd [OK]" << std::endl;
+	std::cout << "PASS cmd [OK] [" << fd_newClient << "]" << std::endl;
 	
 	//NICK
 	NickCheck(fd_newClient, newClient) ;
-	std::cout << "NICK cmd [OK]" << std::endl;
+	std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;
 	
 	//USER
-	newClient->UserCheck(fd_newClient);
-	std::cout << "USER cmd [OK]" << std::endl;
+	UserCheck(fd_newClient, newClient);
+	std::cout << "USER cmd [OK] [" << fd_newClient << "]" << std::endl;
 
 	std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
 	std::cout << BGREEN " connected ✔️" RESET << std::endl;
