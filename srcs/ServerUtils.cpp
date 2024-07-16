@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 12:38:42 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 13:30:40 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,11 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 	while (1)
 	{
 		if (Server::_Signal == true)
+		{
+			ClearAllClients();
+			CloseFds();
 			exit(0);
+		}
 		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
 		if (std::strncmp(buff_r, "NICK ", 5) == 0)
 		{
@@ -102,7 +106,11 @@ void Server::PasswordCheck(int fd_newClient)
 	while (1)
 	{
 		if (Server::_Signal == true)
+		{
+			ClearAllClients();
+			CloseFds();
 			exit(0);
+		}
 		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
 		if (std::strncmp(buff_r, "PASS ", 5) == 0)
 		{
@@ -144,8 +152,12 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
     while (1)
     {
         if (Server::_Signal == true)
+		{
+			ClearAllClients();
+			CloseFds();
 			exit(0);
-        recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+		}
+		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
         int ret;
         ret = regcomp(&regex, USER, REG_EXTENDED);
 		if (ret < 0)
