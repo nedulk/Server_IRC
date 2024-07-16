@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:36:18 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 12:35:55 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 13:33:47 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@ Client::Client()
 	this->_Nickname = "";
 	this->_Realname = "";
 	this->_Username = "";
+}
+
+Client::~Client()
+{
 }
 
 void Client::SetFd(int fd)

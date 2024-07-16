@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 12:37:09 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 13:35:00 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class Server
 		static bool _Signal;
 	public:
 		Server(int port, std::string password);
+		~Server();
 		void ServerInit();
 		void ServerSocket();
 		void NewClient();
@@ -55,6 +56,7 @@ class Server
 		
 		void CloseFds();
 		void ClearClients(int fd);
+		void ClearAllClients();
 		void printState();
 
 		Client*	getClientByName(std::string name);

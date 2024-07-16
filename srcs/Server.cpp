@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 10:13:49 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 14:02:46 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,10 @@ Server::Server(int port, std::string password): _Password(password), _Port(port)
 {
 }
 
+Server::~Server()
+{
+}
+
 void Server::ServerInit()
 {
 	ServerSocket();
@@ -91,6 +95,7 @@ void Server::ServerInit()
 			}
 		}
 	}
+	ClearAllClients();
 	CloseFds();
 }
 
@@ -163,8 +168,8 @@ void Server::NewClient()
 	newClient->SetIp(inet_ntoa((newClient_addr.sin_addr)));
 	fds.push_back(NewPoll);
 	std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET << std::endl;
-	FirstCoHandler(socketFd_newClient, newClient);
 	_Clients.push_back(newClient);
+	FirstCoHandler(socketFd_newClient, newClient);
 }
 
 void Server::ReceiveNewData(int fd)
@@ -234,8 +239,8 @@ void Server::ClearClients(int fd)
 {
 	// Supression d'un client dans la liste. Ex: deconnexion
 	for (std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); ++it) // pre-incrementation par convention
-	{																		  // ++it incremente la valeur et retourne 			
-		if ((*it)->GetFd() == fd)														     // la valeur incrementee
+	{																		  			   // ++it incremente la valeur et retourne 			
+		if ((*it)->GetFd() == fd)														   // la valeur incrementee
 		{
 			_Clients.erase(it);
 			delete *it;
@@ -251,6 +256,21 @@ void Server::ClearClients(int fd)
 			break ;
 		}
 	}
+}
+
+void Server::ClearAllClients()
+{
+    std::vector<Client*>::iterator it = _Clients.begin();
+    while (it != _Clients.end())
+    {
+        delete *it;
+        it = _Clients.erase(it);
+    }
+	// std::vector<struct pollfd>::iterator it_fds = fds.begin();
+	// while (it_fds != fds.end())
+	// {
+	// 	it_fds = fds.erase(it_fds);
+	// }
 }
 
 void Server::CloseFds()

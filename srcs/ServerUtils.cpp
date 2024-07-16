@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 13:30:40 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 14:13:36 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,15 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 			CloseFds();
 			exit(0);
 		}
-		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+		if (bytes <= 0)
+		{
+			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
+			ClearClients(fd_newClient);
+			close(fd_newClient);
+			throw (std::runtime_error("Client disconected"));
+		}
 		if (std::strncmp(buff_r, "NICK ", 5) == 0)
 		{
 			char *buff_rr = buff_r + 5;
@@ -111,7 +119,15 @@ void Server::PasswordCheck(int fd_newClient)
 			CloseFds();
 			exit(0);
 		}
-		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+		if (bytes <= 0)
+		{
+			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
+			ClearClients(fd_newClient);
+			close(fd_newClient);
+			throw (std::runtime_error("Client disconected"));
+		}
 		if (std::strncmp(buff_r, "PASS ", 5) == 0)
 		{
 			char *buff_rr = buff_r + 5;
@@ -157,7 +173,15 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 			CloseFds();
 			exit(0);
 		}
-		recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+		if (bytes <= 0)
+		{
+			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
+			ClearClients(fd_newClient);
+			close(fd_newClient);
+			throw (std::runtime_error("Client disconected"));
+		}
         int ret;
         ret = regcomp(&regex, USER, REG_EXTENDED);
 		if (ret < 0)
@@ -195,18 +219,25 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 
 void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 {
-	//PASS
-	PasswordCheck(fd_newClient);
-	std::cout << "PASS cmd [OK] [" << fd_newClient << "]" << std::endl;
+	try
+	{
+		//PASS
+		PasswordCheck(fd_newClient);
+		std::cout << "PASS cmd [OK] [" << fd_newClient << "]" << std::endl;
 	
-	//NICK
-	NickCheck(fd_newClient, newClient) ;
-	std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;
+		//NICK
+		NickCheck(fd_newClient, newClient) ;
+		std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;
 	
-	//USER
-	UserCheck(fd_newClient, newClient);
-	std::cout << "USER cmd [OK] [" << fd_newClient << "]" << std::endl;
-
+		//USER
+		UserCheck(fd_newClient, newClient);
+		std::cout << "USER cmd [OK] [" << fd_newClient << "]" << std::endl;
+	}
+	catch (std::exception& e)
+	{
+		return ;
+	}
+	
 	std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
 	std::cout << BGREEN " connected ✔️" RESET << std::endl;
 	
