@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 14:13:36 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 14:54:39 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 					else
 					{
 						std::string buff_rr_str(buff_rr);
-						std::string message = std::string(RED).append(ERR_ERRONEUSNICKNAME(buff_rr_str)).append("\n").append(RESET);
+						std::string message = ERR_ERRONEUSNICKNAME(buff_rr_str);
 						send(fd_newClient, message.c_str(), message.size(), 0);
 						std::cout << RED "Error: ERR_ERRONEUSNICKNAME " << "[" << newClient->GetIp() << "] ["
 							<< newClient->GetFd() << "]" RESET << std::endl;
@@ -92,7 +92,7 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 			else
 			{
 				std::string buff_rr_str(buff_rr);
-				std::string message = std::string(RED).append(ERR_NICKNAMEINUSE(buff_rr_str)).append("\n").append(RESET);
+				std::string message = ERR_NICKNAMEINUSE(buff_rr_str);
 				send(fd_newClient, message.c_str(), message.size(), 0);
 				std::cout << RED "Error: ERR_NICKNAMEINUSE " << "[" << newClient->GetIp() << "] ["
 						<< newClient->GetFd() << "]" RESET << std::endl;
@@ -143,12 +143,13 @@ void Server::PasswordCheck(int fd_newClient)
 				}
 				p++;
 			}
+			std::cout << buff_rr << "|" << std::endl;
 			if(std::strcmp(buff_rr, this->_Password.c_str()) == 0)
 				break;
 			else 
 			{
 				std::string buff_rr_str(buff_rr);
-				std::string message = std::string(RED).append(ERR_PASSWDMISMATCH).append("\n").append(RESET);
+				std::string message = ERR_PASSWDMISMATCH;
 				send(fd_newClient, message.c_str(), message.size(), 0);
 				std::cout << RED "Error: ERR_PASSWDMISMATCH [" << fd_newClient << "]" RESET << std::endl;
 				for (int i = 0; i < 1024; i++)
@@ -242,8 +243,8 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 	std::cout << BGREEN " connected ✔️" RESET << std::endl;
 	
 	//WELCOME MSG -> to client 
-	std::string message = std::string(GREEN) + RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), "hostname") + "\n"
-		+ RPL_YOURHOST("RCI", "1.2.5") + "\n" + RPL_CREATED("today") + "\n" + RPL_MYINFO("RCI", "1.2.5", "i/t/k/o/l", "...") + "\n" + (RESET);
+	std::string message = RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), "hostname") + "\n"
+		+ RPL_YOURHOST("RCI", "1.2.5") + "\n" + RPL_CREATED("today") + "\n" + RPL_MYINFO("RCI", "1.2.5", "i/t/k/o/l", "...") + "\n";
 	send(fd_newClient, message.c_str(), message.size(), 0);
 	std::cout << GREEN "Reply: RPL_WELCOME / RPL_YOURHOST / RPL_CREATED / RPL_MYINFO " << "[" << fd_newClient << "]" RESET << std::endl;
 }

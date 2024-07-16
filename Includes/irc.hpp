@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 12:25:12 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 14:46:02 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@
 # define BRESET "\033[1;0m"
 
 /////////////////////////////////// ERROR MSG //////////////////////////////////////////////////////////
-# define ERR_NOTEXTTOSEND						RED "412 :No text to send\n" RESET
+# define ERR_NOTEXTTOSEND						"412 :No text to send\n"
 # define ERR_UNKNOWNCOMMAND(cmd)				"421 " + cmd + " :Unknown command\n"
 # define ERR_NONICKNAMEGIVEN					"431 :No nickname given\n"
 # define ERR_PASSWDMISMATCH						"464 :Password incorrect"
@@ -103,7 +103,7 @@
 
 ////////////// REGEX -PARSING- //////////////////////////
 # define NICK "^[a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
-# define USER "USER *0 *\\* *: *[a-zA-Z]{1,9}"
+# define USER "^USER [a-zA-Z][a-zA-Z0-9_.-]{0,8} 0 \\* :[a-zA-Z]{1,9}"
 # define PRIVMSG "^PRIVMSG (([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+:.{0,450}\n$"
 # define JOIN "^JOIN\n$"
 # define MODE "^MODE\n$"
