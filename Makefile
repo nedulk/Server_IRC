@@ -6,7 +6,7 @@
 #    By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/17 12:10:05 by kprigent          #+#    #+#              #
-#    Updated: 2024/07/14 16:44:35 by kprigent         ###   ########.fr        #
+#    Updated: 2024/07/16 10:38:37 by kprigent         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,3 +44,6 @@ fclean: clean
 re: fclean $(NAME)
 
 .PHONY: all clean fclean re
+
+# 401
+# 407

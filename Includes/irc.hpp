@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/15 17:37:30 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 10:53:40 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # include <poll.h> 
 # include <sys/types.h>
 # include <regex.h>
-# include <ctime> // Fournit des fonctions pour manipuler les dates et les heures
+# include <ctime>
 
 # define ITALIC "\033[3m"
 # define UNDERLINE "\033[4m"
@@ -66,17 +66,18 @@
 # define ERR_NOORIGIN(input)					"409 " + input + " :No origin specified"
 # define ERR_NORECIPIENT(input)					"411 " + input + " :No recipient given"
 # define ERR_NOTEXTTOSEND						RED "412 :No text to send\n" RESET
-# define ERR_UNKNOWNCOMMAND(input, cmd)			"421 " + input + " " + cmd + " :Unknown command"
-# define ERR_NONICKNAMEGIVEN(input)				"431 " + input + " :No nickname given"
+# define ERR_UNKNOWNCOMMAND(cmd)				"421 " + cmd + " :Unknown command\n"
+# define ERR_NONICKNAMEGIVEN					"431 :No nickname given\n"
+# define ERR_PASSWDMISMATCH						"464 :Password incorrect"
 # define ERR_ERRONEUSNICKNAME(nick)				"432 " + nick + " :Erroneous nickname"
 # define ERR_NICKNAMEINUSE(nick)				"433 * " + nick + " :Nickname is already in use"
+
 # define ERR_USERNOTINCHANNEL(input, nick, chn)	"441 " + input + " " + nick + " " + chn + " :They aren't on that channel"
 # define ERR_NOTONCHANNEL(input, chan)			"442 " + input + " " + chan + " :You're not on that channel"
 # define ERR_USERONCHANNEL(input, nick, chan)	"443 " + input + " " + nick + " " + chan + " :is already on channel"
 # define ERR_NOTREGISTERED(input)				"451 " + input + " :You have not registered"
 # define ERR_NEEDMOREPARAMS(input, cmd)			"461 " + input + " " + cmd + " :Not enough parameters"
 # define ERR_ALREADYREGISTRED(input)			"462 " + input + " :Unauthorized command (already registered)"
-# define ERR_PASSWDMISMATCH						"464 :Password incorrect"
 # define ERR_CHANNELISFULL(input, chan)			"471 " + input + " " + chan + " :Cannot join channel (+l)"
 # define ERR_UNKNOWNMODE(input, mode)			"472 " + input + " " + mode + " :is unknown mode char to me"
 # define ERR_INVITEONLYCHAN(input, chan)		"473 " + input + " " + chan + " :Cannot join channel (+i)"
@@ -89,6 +90,7 @@
 # define RPL_YOURHOST(serv, ver)					"002 Your host is " + serv + ", running version " + ver
 # define RPL_CREATED(date)							"003 This server was created " + date
 # define RPL_MYINFO(serv, ver, channelmods, usermods) "004 " + serv + ver + channelmods + usermods
+
 # define RPL_LISTSTART(input)						"321 " + input + " Channel :Users  Name"
 # define RPL_LIST(input, chan, users, topic)		"322 " + input + " " + chan + " " + users + " :" + topic
 # define RPL_LISTEND(input)							"323 " + input + " :End of /LIST"

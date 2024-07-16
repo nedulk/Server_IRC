@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/15 15:54:08 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 10:13:49 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,17 @@ void Server::ReceiveNewData(int fd)
 		std::string regex = Command->RegexCmd(buff);
 		if (!regex.empty())
 		{	
-			Command->execCmd(*this, *getClientByFd(fd),regex, Command->GetCmdArgs(buff));
+			Command->execCmd(*this, *getClientByFd(fd), regex, Command->GetCmdArgs(buff));
+		}
+		else
+		{
+			std::string message = buff;
+			if (!message.empty() && message[message.length()-1] == '\n')
+    			message.erase(message.length()-1);
+    		std::string errMsg = ERR_UNKNOWNCOMMAND(message);
+    		send(fd, errMsg.c_str(), errMsg.size(), 0);
+			std::cout << RED "Error: ERR_UNKNOWNCOMMAND " << "[" << getClientByFd(fd)->GetIp() << "] ["
+				<< fd << "]" RESET << std::endl;
 		}
 		//// DEBUG bytes received ///////
 		// std::cout << BLUE "Client |" << fd << "| : " RESET << buff;

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/15 17:14:50 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 10:48:28 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,11 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 							buff_r[i] = '\0';
 					}
 				}
+				// else
+				// {
+				// 	std::string message = std::string(RED).append(ERR_NONICKNAMEGIVEN).append("\n").append(RESET);
+				// 	send(fd_newClient, message.c_str(), message.size(), 0);
+				// }
 				regfree(&regex); 
 			}
 			else
