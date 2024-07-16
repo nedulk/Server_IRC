@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 10:48:28 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 12:10:36 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,12 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 						std::string buff_rr_str(buff_rr);
 						std::string message = std::string(RED).append(ERR_ERRONEUSNICKNAME(buff_rr_str)).append("\n").append(RESET);
 						send(fd_newClient, message.c_str(), message.size(), 0);
+						std::cout << RED "Error: ERR_ERRONEUSNICKNAME " << "[" << newClient->GetIp() << "] ["
+							<< newClient->GetFd() << "]" RESET << std::endl;
 						for (int i = 0; i < 1024; i++)
 							buff_r[i] = '\0';
 					}
 				}
-				// else
-				// {
-				// 	std::string message = std::string(RED).append(ERR_NONICKNAMEGIVEN).append("\n").append(RESET);
-				// 	send(fd_newClient, message.c_str(), message.size(), 0);
-				// }
 				regfree(&regex); 
 			}
 			else
@@ -83,6 +80,8 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 				std::string buff_rr_str(buff_rr);
 				std::string message = std::string(RED).append(ERR_NICKNAMEINUSE(buff_rr_str)).append("\n").append(RESET);
 				send(fd_newClient, message.c_str(), message.size(), 0);
+				std::cout << RED "Error: ERR_NICKNAMEINUSE " << "[" << newClient->GetIp() << "] ["
+						<< newClient->GetFd() << "]" RESET << std::endl;
 				for (int i = 0; i < 1024; i++)
 					buff_r[i] = '\0';
 				
@@ -125,6 +124,7 @@ void Server::PasswordCheck(int fd_newClient)
 				std::string buff_rr_str(buff_rr);
 				std::string message = std::string(RED).append(ERR_PASSWDMISMATCH).append("\n").append(RESET);
 				send(fd_newClient, message.c_str(), message.size(), 0);
+				std::cout << RED "Error: ERR_PASSWDMISMATCH [" << fd_newClient << "]" RESET << std::endl;
 				for (int i = 0; i < 1024; i++)
 					buff_r[i] = '\0';
 			}
@@ -153,6 +153,7 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 	std::string message = std::string(GREEN) + RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), "hostname") + "\n"
 		+ RPL_YOURHOST("RCI", "1.2.5") + "\n" + RPL_CREATED("today") + "\n" + RPL_MYINFO("RCI", "1.2.5", "i/t/k/o/l", "...") + "\n" + (RESET);
 	send(fd_newClient, message.c_str(), message.size(), 0);
+	std::cout << GREEN "Reply: RPL_WELCOME / RPL_YOURHOST / RPL_CREATED / RPL_MYINFO " << "[" << fd_newClient << "]" RESET << std::endl;
 }
 
 std::map<std::string, Channel*> Server::getChannelList() {

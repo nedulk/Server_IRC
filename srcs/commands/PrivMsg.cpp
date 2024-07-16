@@ -42,7 +42,11 @@ void Command::privMsg(Server& server, Client& client, std::vector<std::string> a
 			}
 		}
 		if (onlyWhitespace)
+		{
 			send(client.GetFd(), ERR_NOTEXTTOSEND, strlen(ERR_NOTEXTTOSEND), 0);
+			std::cout << RED "Error: ERR_NOTEXTTOSEND " << "[" << client.GetIp() << "] ["
+				<< client.GetFd() << "]" RESET << std::endl;
+		}
 		else
 		{
 			for (std::vector<std::string>::iterator it = receiverNames.begin() + 1; it != receiverNames.end(); ++it)
@@ -53,6 +57,14 @@ void Command::privMsg(Server& server, Client& client, std::vector<std::string> a
 
 				send(receiverClient->GetFd(), finalMsg.c_str(), finalMsg.size(), 0);
 			}
+			for (std::string::size_type i = 0; i < msg.size(); ++i)
+			{
+				if (msg[i] == '\n')
+				{
+					msg.erase(i--, 1);
+				}
+			}
+			std::cout << GREEN "-> Message '" << msg << "' sent to " << receiverNames.size() - 1 << " targets." RESET << std::endl;
 		}
 	}
 	catch (std::exception& e)

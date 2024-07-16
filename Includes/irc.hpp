@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 10:53:40 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 11:43:28 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@
 ////////////// REGEX -PARSING- //////////////////////////
 # define NICK "^[a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
 # define USER "USER *0 *\\* *: *[a-zA-Z]{1,9}"
-# define PRIVMSG "^PRIVMSG (([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+:([a-zA-Z ]{0,100})\n$"
+# define PRIVMSG "^PRIVMSG (([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+:.{0,450}\n$"
 # define JOIN "^JOIN\n$"
 # define MODE "^MODE\n$"
 # define TOPIC "^TOPIC\n$"
