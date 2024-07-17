@@ -30,10 +30,9 @@ std::vector<std::string> Command::GetCmdArgs(std::string buff)
 std::string Command::RegexCmd(std::string buff)
 {
 	std::vector<std::string> Regex_vector;
-	Regex_vector.push_back(NICK);
-	Regex_vector.push_back(USER);
 	Regex_vector.push_back(QUIT);
 	Regex_vector.push_back(PRIVMSG);
+	Regex_vector.push_back(PRIVMSG2);
 	Regex_vector.push_back(JOIN);
 	Regex_vector.push_back(MODE);
 	Regex_vector.push_back(TOPIC);
@@ -69,7 +68,7 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 		quitCmd(server, client, args);
 		return ;
 	}
-	else if (cmdName == PRIVMSG)
+	else if(cmdName == PRIVMSG || cmdName == PRIVMSG2)
 	{
 		std::cout << YELLOW "PRIVMSG cmd detected" RESET << std::endl;
 		privMsg(server, client, args);

@@ -6,11 +6,28 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 14:54:39 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/17 15:52:33 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+
+void Server::splitAndKeepLastTwo(const std::string& str)
+{
+    char* cstr = new char[str.length() + 1];
+    std::strcpy(cstr, str.c_str());
+
+    char* token = std::strtok(cstr, "\n\r");
+    std::string lastToken;
+    while (token != NULL)
+    {
+        lastToken = token;
+        token = std::strtok(NULL, "\n\r");
+    }
+    if (!lastToken.empty())
+        remain_line = lastToken;
+    delete[] cstr;
+}
 
 int	Server::NickCheck_oc(std::string buff_rr)
 {
@@ -51,13 +68,15 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 		}
 		if (std::strncmp(buff_r, "NICK ", 5) == 0)
 		{
-			char *buff_rr = buff_r + 5;
+			splitAndKeepLastTwo(buff_r);
+			char *buff_rr;
+			buff_rr = buff_r + 5;
 			while (*buff_rr == ' ')
 				buff_rr++;
 			char *p = buff_rr;
 			while (*p != '\0')
 			{
-				if (*p == '\n')
+				if (*p == '\n' || *p == '\r')
 				{
 					*p = '\0';
 					break;
@@ -136,16 +155,19 @@ void Server::PasswordCheck(int fd_newClient)
 			char *p = buff_rr;
 			while (*p != '\0')
 			{
-				if (*p == '\n')
+				if (*p == '\n' || *p == '\r')
 				{
 					*p = '\0';
 					break;
 				}
 				p++;
 			}
-			std::cout << buff_rr << "|" << std::endl;
 			if(std::strcmp(buff_rr, this->_Password.c_str()) == 0)
+			{	
+				for (int i = 0; i < 1024; i++)
+					buff_r[i] = '\0';
 				break;
+			}
 			else 
 			{
 				std::string buff_rr_str(buff_rr);
@@ -181,39 +203,61 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 			std::cout << BRED " disconnected ×" RESET << std::endl;
 			ClearClients(fd_newClient);
 			close(fd_newClient);
-			throw (std::runtime_error("Client disconected"));
+			throw (std::runtime_error("Client disconnected"));
 		}
-        int ret;
-        ret = regcomp(&regex, USER, REG_EXTENDED);
-		if (ret < 0)
-		{
-			regfree(&regex);
-			return ;
+		if (std::strncmp(buff_r, "USER ", 5) == 0 || std::strncmp(remain_line.c_str(), "USER ", 5) == 0 )
+        {
+			char *buff_rr;
+			if (std::strncmp(remain_line.c_str(), "USER ", 5) == 0)
+			{
+				buff_rr = (char *)remain_line.c_str() + 5;
+			}
+			else
+				buff_rr = buff_r + 5;
+			while (*buff_rr == ' ')
+				buff_rr++;
+			char *p = buff_rr;
+			while (*p != '\0')
+			{
+				if (*p == '\n' || *p == '\r')
+				{
+					*p = '\0';
+					break;
+				}
+				p++;
+			}
+			int ret;
+			ret = regcomp(&regex, USER, REG_EXTENDED);
+			if (ret < 0)
+			{
+				regfree(&regex);
+				return ;
+			}
+			if (!ret)
+			{
+				ret = regexec(&regex, buff_rr, 0, NULL, 0);
+				if (!ret)
+				{
+					char *buff_rrr = buff_r;
+					while(*buff_rrr != ':')
+						buff_rrr++;
+					buff_rrr++;
+					char *p = buff_rrr;
+					while (*p != '\0')
+					{
+						if (*p == '\n' || *p == '\r')
+						{
+							*p = '\0';
+							break;
+						}
+						p++;
+					}
+					newClient->SetUsername(buff_rrr);
+					regfree(&regex);
+					break ;
+				}
+			}
 		}
-        if (!ret)
-        {	
-            ret = regexec(&regex, buff_r, 0, NULL, 0);
-            if (!ret)
-            {
-                char *buff_rr = buff_r;
-                while(*buff_rr != ':')
-                    buff_rr++;
-                buff_rr++;
-                char *p = buff_rr;
-                while (*p != '\0')
-                {
-                    if (*p == '\n')
-                    {
-                        *p = '\0';
-                        break;
-                    }
-                    p++;
-                }
-                newClient->SetUsername(buff_rr);
-                regfree(&regex);
-                break ;
-            }
-        }
     	regfree(&regex);
     }	
 }

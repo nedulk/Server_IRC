@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 13:35:00 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/16 21:40:48 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ class Server
 											    // un objet Server.
 		void FirstCoHandler(int fd_newClient, Client *newClient);
 		void PasswordCheck(int fd_newClient);
+		std::string remain_line;
+		void splitAndKeepLastTwo(const std::string& str);
 		
 		int NickCheck_oc(std::string buff_rr);
 		void NickCheck(int fd_newClient, Client *newClient);

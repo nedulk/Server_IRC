@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 14:02:46 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/17 15:44:49 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,50 +189,49 @@ void Server::ReceiveNewData(int fd)
 	}
 	else
 	{
+		std::queue<std::string> commands;
 		buff[bytes] = '\0';
-		// std::string tmpStr = buff;
-		// if (tmpStr == "privmsgtest1")
-		// {
-		// 	std::string name = "test";
-		// 	std::string msg = "bla";
-		// 	Command::privMsg(*this, getClientByFd(fd), name, msg);
-		// }
-		// if (tmpStr == "privmsgtest2")
-		// {
-		// 	std::string name = "#chan1";
-		// 	std::string msg = "message on chan1";
-		// 	Command::privMsg(*this, getClientByFd(fd), name, msg);
-		// }
-		// if (tmpStr == "jointest1")
-		// {
-		// 	std::string	channelName = "#chan1";
-		// 	std::string	channelKey = "key";
-		// 	Command::join(*this, getClientByFd(fd), channelName, channelKey);
-		// }
-		// if (tmpStr == "jointest2")
-		// {
-		// 	std::string	channelName = "#chan1";
-		// 	std::string	channelKey = "key";
-		// 	Command::join(*this, getClientByFd(fd), channelName, channelKey);
-		// }
-		std::string regex = Command::RegexCmd(buff);
-		if (!regex.empty())
-		{	
-			Command::execCmd(*this, *getClientByFd(fd), regex, Command::GetCmdArgs(buff));
-		}
-		else
+		std::string message = buff;
+
+		// Split message into commands
+		std::string::size_type pos = 0, lastPos = 0;
+		while ((pos = message.find('\n', lastPos)) != std::string::npos)
 		{
-			std::string message = buff;
-			if (!message.empty() && message[message.length()-1] == '\n')
-    			message.erase(message.length()-1);
-    		std::string errMsg = ERR_UNKNOWNCOMMAND(message);
-    		send(fd, errMsg.c_str(), errMsg.size(), 0);
-			std::cout << RED "Error: ERR_UNKNOWNCOMMAND " << "[" << getClientByFd(fd)->GetIp() << "] ["
-				<< fd << "]" RESET << std::endl;
+			std::string command = message.substr(lastPos, pos - lastPos);
+
+			// Remove \r from command
+			command.erase(std::remove(command.begin(), command.end(), '\r'), command.end());
+			if (!command.empty() && command.find_first_not_of('\n') != std::string::npos)
+				commands.push(command);
+			lastPos = pos + 1;
 		}
-		//// DEBUG bytes received ///////
-		// std::cout << BLUE "Client |" << fd << "| : " RESET << buff;
+
+		// Add last command to queue
+		std::string command = message.substr(lastPos);
+		command.erase(std::remove(command.begin(), command.end(), '\r'), command.end());
+		if (!command.empty() && command.find_first_not_of('\n') != std::string::npos)
+			commands.push(command);
+
+		// Process each command
+		while (!commands.empty())
+		{
+			std::string command = commands.front();
+			commands.pop();
+
+			std::string regex = Command->RegexCmd(command.c_str());
+			if (!regex.empty())
+				Command->execCmd(*this, *getClientByFd(fd), regex, Command->GetCmdArgs(command.c_str()));
+			else
+			{
+				std::string errMsg = ERR_UNKNOWNCOMMAND(command);
+				send(fd, errMsg.c_str(), errMsg.size(), 0);
+				std::cout << RED "Error: ERR_UNKNOWNCOMMAND " << "[" << getClientByFd(fd)->GetIp() << "] ["
+					<< fd << "]" RESET << std::endl;
+			}
+		}
 	}
+	// DEBUG bytes received ///////
+	// std::cout << BLUE "Client |" << fd << "| : " RESET << buff << "----\n";
 }
 
 void Server::ClearClients(int fd)
