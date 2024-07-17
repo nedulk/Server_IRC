@@ -6,13 +6,15 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 14:46:02 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/17 11:22:25 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRC_HPP
 # define IRC_HPP
 
+# include <queue>
+# include <algorithm>
 # include <iostream>
 # include <unistd.h>
 # include <cstring>
@@ -103,14 +105,15 @@
 
 ////////////// REGEX -PARSING- //////////////////////////
 # define NICK "^[a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
-# define USER "^USER [a-zA-Z][a-zA-Z0-9_.-]{0,8} 0 \\* :[a-zA-Z]{1,9}"
-# define PRIVMSG "^PRIVMSG (([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+:.{0,450}\n$"
+# define USER "^[a-zA-Z][a-zA-Z0-9_.-]{0,8} 0 \\* :[a-zA-Z]{1,9}$"
+# define PRIVMSG "^PRIVMSG ([a-zA-Z][a-zA-Z0-9_.-]{0,8}(,[a-zA-Z][a-zA-Z0-9_.-]{0,8})*) :.{0,450}$"
+# define PRIVMSG2 "^PRIVMSG ([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ :.{0,450}$"
 # define JOIN "^JOIN\n$"
 # define MODE "^MODE\n$"
 # define TOPIC "^TOPIC\n$"
 # define INVITE "^INVITE\n$"
 # define KICK "^KICK\n$"
-# define QUIT "^QUIT :[a-zA-Z0-9 ]{0,50}\n$"
+# define QUIT "^QUIT :[a-zA-Z0-9 ]{0,50}$"
 
 # include "Server.hpp"
 # include "Client.hpp"
