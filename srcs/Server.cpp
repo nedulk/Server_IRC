@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/17 15:33:56 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/17 15:44:49 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,9 +210,7 @@ void Server::ReceiveNewData(int fd)
 		std::string command = message.substr(lastPos);
 		command.erase(std::remove(command.begin(), command.end(), '\r'), command.end());
 		if (!command.empty() && command.find_first_not_of('\n') != std::string::npos)
-		{
 			commands.push(command);
-		}
 
 		// Process each command
 		while (!commands.empty())
@@ -222,9 +220,7 @@ void Server::ReceiveNewData(int fd)
 
 			std::string regex = Command->RegexCmd(command.c_str());
 			if (!regex.empty())
-			{   
 				Command->execCmd(*this, *getClientByFd(fd), regex, Command->GetCmdArgs(command.c_str()));
-			}
 			else
 			{
 				std::string errMsg = ERR_UNKNOWNCOMMAND(command);

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/17 10:32:07 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/17 15:52:33 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 		}
 		if (std::strncmp(buff_r, "NICK ", 5) == 0)
 		{
+			splitAndKeepLastTwo(buff_r);
 			char *buff_rr;
 			buff_rr = buff_r + 5;
 			while (*buff_rr == ' ')
@@ -204,10 +205,15 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 			close(fd_newClient);
 			throw (std::runtime_error("Client disconnected"));
 		}
-		if (std::strncmp(buff_r, "USER ", 5) == 0)
+		if (std::strncmp(buff_r, "USER ", 5) == 0 || std::strncmp(remain_line.c_str(), "USER ", 5) == 0 )
         {
 			char *buff_rr;
-			buff_rr = buff_r + 5;
+			if (std::strncmp(remain_line.c_str(), "USER ", 5) == 0)
+			{
+				buff_rr = (char *)remain_line.c_str() + 5;
+			}
+			else
+				buff_rr = buff_r + 5;
 			while (*buff_rr == ' ')
 				buff_rr++;
 			char *p = buff_rr;
