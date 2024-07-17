@@ -51,11 +51,17 @@ void Command::privMsg(Server& server, Client& client, std::vector<std::string> a
 		{
 			for (std::vector<std::string>::iterator it = receiverNames.begin() + 1; it != receiverNames.end(); ++it)
 			{
-				std::string finalMsg = client.GetNick() + "!" + client.GetNick()
-											+ "@hostname PRIVMSG " + *it + ": " + msg;
-				Client* receiverClient = server.getClientByName(*it);
-
-				send(receiverClient->GetFd(), finalMsg.c_str(), finalMsg.size(), 0);
+				std::string finalMsg =  client.GetNick() + "!" + getHostname()
+						+ " PRIVMSG " + *it + ": " + msg + "\r\n";
+				if ((*it)[0] == '#')
+				{
+					server.broadcastMsg(finalMsg, *it, client, false);
+				}
+				else
+				{
+					Client* receiverClient = server.getClientByName(*it);
+					send(receiverClient->GetFd(), finalMsg.c_str(), finalMsg.size(), 0);
+				}
 			}
 			for (std::string::size_type i = 0; i < msg.size(); ++i)
 			{

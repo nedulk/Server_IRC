@@ -215,10 +215,10 @@ void Server::ReceiveNewData(int fd)
 		// 	std::string	channelKey = "key";
 		// 	Command::join(*this, getClientByFd(fd), channelName, channelKey);
 		// }
-		std::string regex = Command->RegexCmd(buff);
+		std::string regex = Command::RegexCmd(buff);
 		if (!regex.empty())
 		{	
-			Command->execCmd(*this, *getClientByFd(fd), regex, Command->GetCmdArgs(buff));
+			Command::execCmd(*this, *getClientByFd(fd), regex, Command::GetCmdArgs(buff));
 		}
 		else
 		{
@@ -352,7 +352,7 @@ Client *Server::getClientByFd(int fd)
 	throw (std::runtime_error("Client not found"));
 }
 
-void Server::broadcastMsg(std::string& msg, std::string& channelName, Client& sender)
+void Server::broadcastMsg(std::string msg, std::string& channelName, Client& sender, bool sendToSelf)
 {
 	try
 	{
@@ -368,7 +368,7 @@ void Server::broadcastMsg(std::string& msg, std::string& channelName, Client& se
 			it != userList.end();
 			it++)
 		{
-			if (it->second->GetFd() != sender.GetFd())
+			if (sendToSelf || it->second->GetFd() != sender.GetFd())
 				send(it->second->GetFd(), msg.c_str(), msg.size(), 0);
 		}
 	}

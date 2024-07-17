@@ -64,7 +64,7 @@ class Server
 
 		std::map<std::string, Channel*>	getChannelList();
 		void	createChannel(Client* oper, std::string& channelName, std::string key);
-		void broadcastMsg(std::string &msg, std::string &channelName, Client &sender);
+		void broadcastMsg(std::string msg, std::string &channelName, Client &sender, bool sendToSelf);
 };
 		
 #endif		

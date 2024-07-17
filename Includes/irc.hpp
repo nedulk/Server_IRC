@@ -29,6 +29,8 @@
 # include <sys/types.h>
 # include <regex.h>
 # include <ctime>
+# include <climits>
+# include <algorithm>
 
 # define ITALIC "\033[3m"
 # define UNDERLINE "\033[4m"
@@ -105,7 +107,8 @@
 # define NICK "^[a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
 # define USER "^USER [a-zA-Z][a-zA-Z0-9_.-]{0,8} 0 \\* :[a-zA-Z]{1,9}"
 # define PRIVMSG "^PRIVMSG (([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+:.{0,450}\n$"
-# define JOIN "^JOIN\n$"
+//# define PRIVMSG "^PRIVMSG (([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+|(#[^':\x07\x0D\x0A]+ )+:.{0,450}\n$"
+# define JOIN "^JOIN [^':\x07\x0D\x0A]+\n$"
 # define MODE "^MODE\n$"
 # define TOPIC "^TOPIC\n$"
 # define INVITE "^INVITE\n$"

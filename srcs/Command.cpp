@@ -8,13 +8,13 @@ std::vector<std::string> Command::GetCmdArgs(std::string buff)
 {
     std::vector<std::string> args;
     std::string::size_type start = 0;
-    std::string::size_type end = buff.find(" ");
+    std::string::size_type end = buff.find(' ');
 
     while (end != std::string::npos) 
 	{
         args.push_back(buff.substr(start, end - start));
         start = end + 1;
-        end = buff.find(" ", start);
+        end = buff.find(' ', start);
     }
     args.push_back(buff.substr(start));
 
@@ -69,7 +69,7 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 		quitCmd(server, client, args);
 		return ;
 	}
-	else if(cmdName == PRIVMSG)
+	else if (cmdName == PRIVMSG)
 	{
 		std::cout << YELLOW "PRIVMSG cmd detected" RESET << std::endl;
 		privMsg(server, client, args);
@@ -78,7 +78,7 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 	else if (cmdName == JOIN)
 	{	
 		std::cout <<  YELLOW "JOIN cmd detected" RESET << std::endl;
-		// privMsg(server, sender, args[0], args[1]);
+		join(server, client, args);
 		return ;
 	}
 	else if (cmdName == MODE)
@@ -103,3 +103,19 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 	}
 }
 
+std::string Command::getHostname()
+{
+	char		login[LOGIN_NAME_MAX];
+	char		host[HOST_NAME_MAX];
+	std::string	hostname;
+
+	getlogin_r(login, LOGIN_NAME_MAX);
+	gethostname(host, HOST_NAME_MAX);
+	login[LOGIN_NAME_MAX - 1] = 0;
+	host[HOST_NAME_MAX - 1] = 0;
+
+	hostname = login;
+	hostname += "@";
+	hostname += host;
+	return (hostname);
+}

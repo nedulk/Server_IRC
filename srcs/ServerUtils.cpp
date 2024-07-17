@@ -249,7 +249,8 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 	std::cout << GREEN "Reply: RPL_WELCOME / RPL_YOURHOST / RPL_CREATED / RPL_MYINFO " << "[" << fd_newClient << "]" RESET << std::endl;
 }
 
-std::map<std::string, Channel*> Server::getChannelList() {
+std::map<std::string, Channel*> Server::getChannelList()
+{
 	return (_channelList);
 }
 
@@ -267,8 +268,10 @@ void Server::createChannel(Client *oper, std::string &channelName, std::string k
 		newChannel->addOperator(oper);
 		newChannel->addUser(oper);
 		_channelList[channelName] = newChannel;
-		std::cout << "Channel " + channelName + "successfully created" << std::endl;
-		std::cout << "User " + oper->GetNick() + "successfully joined" << std::endl;
+		std::cout << "Channel " + channelName + " successfully created" << std::endl;
+		std::cout << "User " + oper->GetNick() + " successfully joined" << std::endl;
+		broadcastMsg(":" + oper->GetNick() + "!~" + Command::getHostname() + " JOIN :"
+			+ channelName + "\r\n", channelName, *oper, true);
 	}
 	catch (std::exception& e)
 	{

@@ -4,11 +4,90 @@
 
 #include "Command.hpp"
 
-void Command::join(Server& server, Client* sender, std::string &channelName, std::string key)
+std::vector<std::string> Command::getJoinKeys(std::string &arg)
+{
+	std::vector<std::string> keys;
+	unsigned long	i;
+	unsigned long	nameStart;
+
+	i = 0;
+	nameStart = 0;
+	while (arg[i])
+	{
+		if (arg[i] == ',' || !arg[i + 1])
+		{
+			if (arg[nameStart] == ',')
+				keys.push_back("");
+			else
+				keys.push_back(arg.substr(nameStart, i - nameStart));
+			nameStart = i + 1;
+		}
+		i++;
+	}
+	keys.back().erase(std::remove(keys.back().begin(),
+								  keys.back().end(), '\n'), keys.back().end());
+	return (keys);
+}
+
+std::vector<std::string> Command::getJoinChannels(std::string &arg)
+{
+	std::vector<std::string>	channels;
+	unsigned long				i;
+	unsigned long				nameStart;
+
+	i = 0;
+	while (i + 1 != arg.size())
+	{
+		while (arg[i] == ',')
+			i++;
+		nameStart = i;
+		if (arg.size() == i + 1)
+			break;
+		if (arg[i] != '#')
+		{
+			channels.clear();
+			return (channels);
+		}
+		while (i + 1 != arg.size() && arg[i] != ',')
+			i++;
+		channels.push_back(arg.substr(nameStart, i - nameStart));
+	}
+	channels.back().erase(std::remove(channels.back().begin(),
+									  channels.back().end(), '\n'), channels.back().end());
+	return (channels);
+}
+
+void Command::join(Server& server, Client& sender, std::vector<std::string> &args)
+{
+	std::vector<std::string>	channels;
+	std::vector<std::string>	keys;
+
+	args.erase(args.begin());
+	channels = getJoinChannels(args.front());
+	if (channels.empty())
+	{
+		std::cout << "channel name error" << std::endl;
+		return ;
+	}
+	args.erase(args.begin());
+	keys = getJoinKeys(args.front());
+	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); it++)
+	{
+		if (keys.empty())
+			joinChannel(server, sender, *it, "");
+		else
+		{
+			joinChannel(server, sender, *it, keys.front());
+			keys.erase(keys.begin());
+		}
+	}
+}
+
+void Command::joinChannel(Server& server, Client& sender, std::string &channelName, std::string key)
 {
 	if (server.getChannelList().count(channelName) == 0) //channel doesnt exist
 	{
-		server.createChannel(sender, channelName, key);
+		server.createChannel(&sender, channelName, key);
 		return ;
 	}
 	try	//channel exists
@@ -16,16 +95,18 @@ void Command::join(Server& server, Client* sender, std::string &channelName, std
 		Channel	*channel = server.getChannelList().at(channelName);
 
 		std::map<int, Client*>	userList = channel->getUserList();
-		if (userList.count(sender->GetFd()) != 0)
+		if (userList.count(sender.GetFd()) != 0)
 			return ;
-		if (channel->getInviteOnly() && sender->isInvitedToChannel(channelName) == false)
+		if (channel->getInviteOnly() && sender.isInvitedToChannel(channelName) == false)
 			throw (std::runtime_error(ERR_INVITEONLYCHAN(channelName + " " + key, channelName)));
 		if (channel->getIsUserLimit() && channel->getUserLimit() + 1 > channel->getUserCount())
 			throw (std::runtime_error(ERR_CHANNELISFULL(channelName + " " + key, channelName)));
 		if (channel->getIsChannelKey() && key != channel->getKey())
 			throw (std::runtime_error(ERR_BADCHANNELKEY(channelName + " " + key, channelName)));
-		channel->addUser(sender);
-		std::cout << sender->GetNick() + " successfully joined " << channelName << std::endl;
+		channel->addUser(&sender);
+		server.broadcastMsg(":" + sender.GetNick() + "!~" +
+			getHostname() + " JOIN :" + channelName + "\r\n", channelName, sender, true);
+//		std::cout << sender.GetNick() + " successfully joined " << channelName << std::endl;
 	}
 	catch (std::exception& e)
 	{
