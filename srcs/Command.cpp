@@ -104,17 +104,9 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 
 std::string Command::getHostname()
 {
-	char		login[LOGIN_NAME_MAX];
 	char		host[HOST_NAME_MAX];
-	std::string	hostname;
 
-	getlogin_r(login, LOGIN_NAME_MAX);
 	gethostname(host, HOST_NAME_MAX);
-	login[LOGIN_NAME_MAX - 1] = 0;
 	host[HOST_NAME_MAX - 1] = 0;
-
-	hostname = login;
-	hostname += "@";
-	hostname += host;
-	return (hostname);
+	return (host);
 }
