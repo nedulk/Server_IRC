@@ -41,22 +41,14 @@ std::vector<std::string> Command::getJoinChannels(std::string &arg)
 		nameStart = i;
 		if (!arg[i])
 			break;
-		if (arg[i] != '#')
-		{
-			channels.clear();
-			return (channels);
-		}
 		while (arg[i] && arg[i] != ',')
 			i++;
-		if (nameStart == i && arg[nameStart] == '#')
-			channels.push_back("#");
-		else
-			channels.push_back(arg.substr(nameStart, i - nameStart));
+		channels.push_back(arg.substr(nameStart, i - nameStart));
 	}
 	return (channels);
 }
 
-void Command::join(Server& server, Client& sender, std::vector<std::string> &args)
+void Command::joinCmd(Server& server, Client& sender, std::vector<std::string> &args)
 {
 	std::vector<std::string>	channels;
 	std::vector<std::string>	keys;
@@ -67,6 +59,9 @@ void Command::join(Server& server, Client& sender, std::vector<std::string> &arg
 	{
 		std::cout << "channel name error" << std::endl;
 		return ;
+	}
+	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); ++it) {
+		std::cout << "channel : '" << *it << "'" << std::endl;
 	}
 	args.erase(args.begin());
 	keys = getJoinKeys(args.front());
@@ -96,16 +91,27 @@ void Command::joinChannel(Server& server, Client& sender, std::string &channelNa
 		std::map<int, Client*>	userList = channel->getUserList();
 		if (userList.count(sender.GetFd()) != 0)
 			return ;
-		if (channel->getInviteOnly() && sender.isInvitedToChannel(channelName) == false)
+		if (channel->getInviteOnly() && channel->isInvited(sender.GetFd()) == false)
 			throw (std::runtime_error(ERR_INVITEONLYCHAN(channelName + " " + key, channelName)));
 		if (channel->getIsUserLimit() && channel->getUserLimit() + 1 > channel->getUserCount())
 			throw (std::runtime_error(ERR_CHANNELISFULL(channelName + " " + key, channelName)));
 		if (channel->getIsChannelKey() && key != channel->getKey())
 			throw (std::runtime_error(ERR_BADCHANNELKEY(channelName + " " + key, channelName)));
+
 		channel->addUser(&sender);
-		server.broadcastMsg(":" + sender.GetNick() + "!~" + sender.GetUsername() + "@" +
-			getHostname() + " JOIN :" + channelName + "\r\n", channelName, sender, true);
-//		std::cout << sender.GetNick() + " successfully joined " << channelName << std::endl;
+		if (channel->isInvited(sender.GetFd()))
+			channel->delInvite(sender.GetFd());
+		sender.joinedChannel();
+
+		if (!channel->getTopic().empty())
+		{
+			std::string topicMsg = RPL_TOPIC(sender.GetNick(), channel->getName(), channel->getTopic()) + "\r\n";
+			send(sender.GetFd(), topicMsg.c_str(), topicMsg.size(), 0);
+		}
+		server.broadcastMsg(":" + sender.GetNick() + "!" + sender.GetUsername() + "@" +
+			getHostname() + " JOIN " + channelName + " * :" + sender.GetRealname() + "\r\n",
+			channelName, sender, true);
+		channel->broadcastUserList(sender);
 	}
 	catch (std::exception& e)
 	{

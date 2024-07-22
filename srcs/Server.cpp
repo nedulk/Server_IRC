@@ -218,9 +218,9 @@ void Server::ReceiveNewData(int fd)
 			std::string command = commands.front();
 			commands.pop();
 
-			std::string regex = Command->RegexCmd(command.c_str());
+			std::string regex = Command::RegexCmd(command.c_str());
 			if (!regex.empty())
-				Command->execCmd(*this, *getClientByFd(fd), regex, Command->GetCmdArgs(command.c_str()));
+				Command::execCmd(*this, *getClientByFd(fd), regex, Command::GetCmdArgs(command.c_str()));
 			else
 			{
 				std::string errMsg = ERR_UNKNOWNCOMMAND(command);
@@ -349,6 +349,11 @@ Client *Server::getClientByFd(int fd)
 			return (*it);
 	}
 	throw (std::runtime_error("Client not found"));
+}
+
+std::vector<Client *> Server::getClients()
+{
+	return (_Clients);
 }
 
 void Server::broadcastMsg(std::string msg, std::string& channelName, Client& sender, bool sendToSelf)

@@ -54,8 +54,6 @@ class Server
 		void NickCheck(int fd_newClient, Client *newClient);
 		void UserCheck(int fd_new_client, Client *newClient);
 		
-		Command *Command;
-		
 		void CloseFds();
 		void ClearClients(int fd);
 		void ClearAllClients();
@@ -63,10 +61,12 @@ class Server
 
 		Client*	getClientByName(std::string name);
 		Client*	getClientByFd(int fd);
-
+		std::vector<Client *>	getClients();
 		std::map<std::string, Channel*>	getChannelList();
+
+		void	deleteChannel(std::string& channelName);
 		void	createChannel(Client* oper, std::string& channelName, std::string key);
-		void broadcastMsg(std::string msg, std::string &channelName, Client &sender, bool sendToSelf);
+		void	broadcastMsg(std::string msg, std::string &channelName, Client &sender, bool sendToSelf);
 };
 		
 #endif		

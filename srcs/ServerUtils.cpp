@@ -261,7 +261,7 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 				}
 			}
 		}
-    	regfree(&regex);
+    	// regfree(&regex);
     }	
 }
 
@@ -276,7 +276,7 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 		//NICK
 		NickCheck(fd_newClient, newClient) ;
 		std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;
-	
+
 		//USER
 		UserCheck(fd_newClient, newClient);
 		std::cout << "USER cmd [OK] [" << fd_newClient << "]" << std::endl;
@@ -301,6 +301,12 @@ std::map<std::string, Channel*> Server::getChannelList()
 	return (_channelList);
 }
 
+void Server::deleteChannel(std::string &channelName)
+{
+	_channelList.erase(channelName);
+}
+
+
 void Server::createChannel(Client *oper, std::string &channelName, std::string key)
 {
 	try
@@ -317,8 +323,9 @@ void Server::createChannel(Client *oper, std::string &channelName, std::string k
 		_channelList[channelName] = newChannel;
 		std::cout << "Channel " + channelName + " successfully created" << std::endl;
 		std::cout << "User " + oper->GetNick() + " successfully joined" << std::endl;
-		broadcastMsg(":" + oper->GetNick() + "!~" + oper->GetUsername() + "@" +
-			Command::getHostname() + " JOIN :" + channelName + "\r\n", channelName, *oper, true);
+		broadcastMsg(":" + oper->GetNick() + "!" + oper->GetUsername() + "@" +
+			Command::getHostname() + " JOIN " + channelName + " * :" + oper->GetRealname() + "\r\n", channelName, *oper, true);
+		newChannel->broadcastUserList(*oper);
 	}
 	catch (std::exception& e)
 	{

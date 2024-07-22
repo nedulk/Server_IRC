@@ -39,6 +39,8 @@ std::string Command::RegexCmd(std::string buff)
 	Regex_vector.push_back(INVITE);
 	Regex_vector.push_back(KICK);
 	Regex_vector.push_back(QUIT);
+	Regex_vector.push_back(PART);
+	Regex_vector.push_back(WHO);
 	
 	regex_t regex;
 	int ret;
@@ -66,39 +68,45 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 	{
 		std::cout << YELLOW "QUIT cmd detected" RESET << std::endl;
 		quitCmd(server, client, args);
-		return ;
 	}
 	else if(cmdName == PRIVMSG || cmdName == PRIVMSG2)
 	{
 		std::cout << YELLOW "PRIVMSG cmd detected" RESET << std::endl;
 		privMsg(server, client, args);
-		return ;
 	}
 	else if (cmdName == JOIN)
 	{	
 		std::cout <<  YELLOW "JOIN cmd detected" RESET << std::endl;
-		join(server, client, args);
-		return ;
+		joinCmd(server, client, args);
 	}
 	else if (cmdName == MODE)
 	{
 		std::cout << YELLOW "MODE cmd detected" RESET << std::endl;
-		return ;
 	}
 	else if (cmdName == TOPIC)
 	{
 		std::cout << YELLOW "TOPIC cmd detected" RESET << std::endl;
-		return ;
+		topicCmd(server, client, args);
 	}
 	else if (cmdName == INVITE)
 	{
 		std::cout << YELLOW "INVITE cmd detected" RESET << std::endl;
-		return ;
+		inviteCmd(server, client, args);
 	}
 	else if (cmdName == KICK)
 	{
 		std::cout << YELLOW "KICK cmd detected" RESET << std::endl;
-		return ;
+		kickCmd(server, client, args);
+	}
+	else if (cmdName == PART)
+	{
+		std::cout << YELLOW "PART cmd detected" RESET << std::endl;
+		partCmd(server, client, args);
+	}
+	else if (cmdName == WHO)
+	{
+		std::cout << YELLOW "WHO cmd detected" RESET << std::endl;
+		whoCmd(server, client, args);
 	}
 }
 

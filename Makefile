@@ -18,7 +18,13 @@ SRC = srcs/main.cpp \
 	  srcs/Command.cpp \
 	  srcs/commands/Join.cpp \
 	  srcs/commands/PrivMsg.cpp \
-	  srcs/commands/QuitCmd.cpp
+	  srcs/commands/QuitCmd.cpp \
+	  srcs/commands/Kick.cpp \
+	  srcs/commands/Part.cpp \
+	  srcs/commands/Who.cpp \
+	  srcs/commands/Invite.cpp \
+	  srcs/commands/Topic.cpp \
+	  srcs/commands/Mode.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

@@ -87,7 +87,7 @@
 # define ERR_INVITEONLYCHAN(input, chan)		"473 " + input + " " + chan + " :Cannot join channel (+i)"
 # define ERR_BADCHANNELKEY(input, chan)			"475 " + input + " " + chan + " :Cannot join channel (+k)"
 # define ERR_NOPRIVILEGES(input)				"481 " + input + " :Permission Denied- You're not an IRC operator"
-# define ERR_CHANOPRIVSNEEDED(input, chan)
+# define ERR_CHANOPRIVSNEEDED(input, chan)		"482 " + input + " " + chan + " :You're not channel operator"
 
 //////////////////////////////// SERVER REPLY /////////////////////////////////////////////////////////////////////
 # define RPL_WELCOME(nick, user, host)				"001 " "Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host
@@ -100,10 +100,12 @@
 # define RPL_LISTEND(input)							"323 " + input + " :End of /LIST"
 # define RPL_CHANNELMODEIS(input, chan, md)			"324 " + input + " " + chan + " " + md
 # define RPL_NOTOPIC(input, chan)					"331 " + input + " " + chan + " :No topic is set"
-# define RPL_TOPIC(input, chan, topic)				"332 " + input + " " + chan + " :" + topic
+# define RPL_TOPIC(input, chan, topic)				"332 " + input + " " + chan + " " + topic
 # define RPL_INVITING(input, nick, chan)			"341 " + input + " " + nick + " " + chan
+# define RPL_WHOREPLY(input, chan, user)			"352 " + input + " " + chan + " " + user
+// missing whoreply end
 # define RPL_NAMREPLY(input, chan, nicks)			"353 " + input + " = " + chan + " :" + nicks
-# define RPL_ENDOFNAMES(input, chan)				"366 " + input + " " + chan + " :End of /NAMES list"
+# define RPL_ENDOFNAMES(input, chan)				("366 " + input + " " + chan + " :End of /NAMES list")
 
 ////////////// REGEX -PARSING- //////////////////////////
 # define NICK "^[a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
@@ -111,11 +113,14 @@
 # define PRIVMSG "^PRIVMSG ([a-zA-Z][a-zA-Z0-9_.-]{0,8}(,[a-zA-Z][a-zA-Z0-9_.-]{0,8})*) :.{0,450}$"
 # define PRIVMSG2 "^PRIVMSG ((([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+|(#[^' :\x07\x0D\x0A]+ )+)+:.{0,450}$"
 # define JOIN "^JOIN [^':\x07\x0D\x0A]+$"
-# define MODE "^MODE\n$"
-# define TOPIC "^TOPIC\n$"
-# define INVITE "^INVITE\n$"
-# define KICK "^KICK\n$"
+# define MODE "^MODE [^'\x07\x0D\x0A]+$"
+# define TOPIC "^TOPIC [^'\x07\x0D\x0A]+$"
+# define INVITE "^INVITE [^'\x07\x0D\x0A]+$"
+# define KICK "^KICK [^'\x07\x0D\x0A]+$"
 # define QUIT "^QUIT :[a-zA-Z0-9 ]{0,50}$"
+# define PART "^PART [^'\x07\x0D\x0A]+$"
+# define WHO "^WHO [^'\x07\x0D\x0A]+$"
+	//refaire PART pour detection channels
 
 # include "Server.hpp"
 # include "Client.hpp"
