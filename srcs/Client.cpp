@@ -18,6 +18,7 @@ Client::Client()
 	this->_Nickname = "";
 	this->_Realname = "";
 	this->_Username = "";
+	this->_joinedChannels = 0;
 }
 
 Client::~Client()
@@ -84,13 +85,22 @@ std::string Client::GetRealname()
 	return (this->_Realname);
 }
 
-bool Client::isInvitedToChannel(std::string& channelName)
+void Client::joinedChannel()
 {
-	for (std::vector<std::string>::iterator it = _channelInvites.begin(); it != _channelInvites.end(); it++)
-	{
-		if (*it == channelName)
-			return (true);
-	}
-	return (false);
+	_joinedChannels++;
 }
 
+void Client::leftChannel()
+{
+	_joinedChannels--;
+}
+
+int Client::getJoinedChannels()
+{
+	return (_joinedChannels);
+}
+
+void Client::sendErrorMsg(std::string msg)
+{
+	send(_fd, msg.c_str(), msg.size(), 0);
+}

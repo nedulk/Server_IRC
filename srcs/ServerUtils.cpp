@@ -238,7 +238,7 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 				ret = regexec(&regex, buff_rr, 0, NULL, 0);
 				if (!ret)
 				{
-					char *buff_rrr = buff_r;
+					char *buff_rrr = buff_rr;
 					while(*buff_rrr != ':')
 						buff_rrr++;
 					buff_rrr++;
@@ -252,13 +252,16 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 						}
 						p++;
 					}
-					newClient->SetUsername(buff_rrr);
+					if ((std::string)buff_rrr == "realname")
+						newClient->SetUsername(newClient->GetNick());
+					else
+						newClient->SetUsername(buff_rrr);
 					regfree(&regex);
 					break ;
 				}
 			}
 		}
-    	regfree(&regex);
+    	// regfree(&regex);
     }	
 }
 
@@ -273,7 +276,7 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 		//NICK
 		NickCheck(fd_newClient, newClient) ;
 		std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;
-	
+
 		//USER
 		UserCheck(fd_newClient, newClient);
 		std::cout << "USER cmd [OK] [" << fd_newClient << "]" << std::endl;
@@ -287,7 +290,7 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 	std::cout << BGREEN " connected ✔️" RESET << std::endl;
 	
 	//WELCOME MSG -> to client 
-	std::string message = RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), "hostname") + "\n"
+	std::string message = RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), Command::getHostname()) + "\n"
 		+ RPL_YOURHOST("RCI", "1.2.5") + "\n" + RPL_CREATED("today") + "\n" + RPL_MYINFO("RCI", "1.2.5", "i/t/k/o/l", "...") + "\n";
 	send(fd_newClient, message.c_str(), message.size(), 0);
 	std::cout << GREEN "Reply: RPL_WELCOME / RPL_YOURHOST / RPL_CREATED / RPL_MYINFO " << "[" << fd_newClient << "]" RESET << std::endl;
@@ -297,6 +300,12 @@ std::map<std::string, Channel*> Server::getChannelList()
 {
 	return (_channelList);
 }
+
+void Server::deleteChannel(std::string &channelName)
+{
+	_channelList.erase(channelName);
+}
+
 
 void Server::createChannel(Client *oper, std::string &channelName, std::string key)
 {
@@ -314,8 +323,9 @@ void Server::createChannel(Client *oper, std::string &channelName, std::string k
 		_channelList[channelName] = newChannel;
 		std::cout << "Channel " + channelName + " successfully created" << std::endl;
 		std::cout << "User " + oper->GetNick() + " successfully joined" << std::endl;
-		broadcastMsg(":" + oper->GetNick() + "!~" + Command::getHostname() + " JOIN :"
-			+ channelName + "\r\n", channelName, *oper, true);
+		broadcastMsg(":" + oper->GetNick() + "!" + oper->GetUsername() + "@" +
+			Command::getHostname() + " JOIN " + channelName + " * :" + oper->GetRealname() + "\r\n", channelName, *oper, true);
+		newChannel->broadcastUserList(*oper);
 	}
 	catch (std::exception& e)
 	{

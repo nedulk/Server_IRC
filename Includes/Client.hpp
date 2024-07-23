@@ -30,9 +30,12 @@ class Client
 		std::string _Hostname;
 		std::string _Realname;
 
-		std::vector<std::string>	_channelInvites;
+		int	_joinedChannels;
+		// change joinedChannels to vector<Channel *>
+		// fix getJoinedChannels() to match change
+		// should be easier to delete client from everywhere
+		//			when it quits the server
 
-		// Server *Serv;
 	public:
 		Client();
 		~Client();
@@ -56,7 +59,11 @@ class Client
 		void SetRealname(std::string realname);
 		std::string GetRealname();
 
-		bool	isInvitedToChannel(std::string& channelName);
+		void	joinedChannel();
+		void	leftChannel();
+		int		getJoinedChannels();
+
+		void	sendErrorMsg(std::string msg);
 };
 
 #endif

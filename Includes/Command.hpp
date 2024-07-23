@@ -21,7 +21,7 @@ class Command
 		static std::vector<std::string>	getJoinChannels(std::string &arg);
 		static std::vector<std::string>	getJoinKeys(std::string &arg);
 		static void						joinChannel(Server& server, Client& sender, std::string &channelName, std::string key);
-public:
+	public:
 
 		Server *server;
 	/////CMD handling /////
@@ -32,9 +32,16 @@ public:
 		static std::string				getHostname();
 
 		/////CMD fct ///////
-		static void	join(Server& server, Client& sender, std::vector<std::string> &args);
+		static void	joinCmd(Server& server, Client& sender, std::vector<std::string> &args);
 		static void	privMsg(Server& server, Client& client, std::vector<std::string> args);
 		static void quitCmd(Server& server, Client& client, std::vector<std::string> args);
+		static void	kickCmd(Server& server, Client& client, std::vector<std::string> args);
+		static void	partCmd(Server& server, Client& client, std::vector<std::string> args);
+		static void	whoCmd(Server& server, Client& client, std::vector<std::string> args);
+		static void	inviteCmd(Server& server, Client& client, std::vector<std::string> args);
+		static void	topicCmd(Server& server, Client& client, std::vector<std::string> args);
+		static void	modeCmd(Server& server, Client& client, std::vector<std::string> args);
+
 };
 
 #endif
