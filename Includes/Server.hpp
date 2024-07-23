@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 21:40:48 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/17 17:30:21 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ class Server
 		void ClearAllClients();
 		void printState();
 
-		Client*	getClientByName(std::string name);
+		Client*	getClientByName(std::string name, int mode);
 		Client*	getClientByFd(int fd);
 
 		std::map<std::string, Channel*>	getChannelList();

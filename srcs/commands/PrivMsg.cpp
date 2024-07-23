@@ -88,7 +88,15 @@ void Command::privMsg(Server& server, Client& client, std::vector<std::string> a
 				}
 				else
 				{
-					Client* receiverClient = server.getClientByName(*it);
+					Client* receiverClient = server.getClientByName(*it, 1);
+					if (receiverClient == NULL)
+					{
+						std::string err_nick = ERR_NOSUCHNICK(*it);
+						send(client.GetFd(), err_nick.c_str(), (ERR_NOSUCHNICK(*it)).size(), 0);
+						std::cout << RED "Error: ERR_NOSUCHNICK " << "[" << client.GetIp() << "] ["
+							<< client.GetFd() << "]" RESET << std::endl;
+						throw(std::runtime_error (""));
+					}
 					send(receiverClient->GetFd(), finalMsg.c_str(), finalMsg.size(), 0);
 				}
 			}
@@ -97,6 +105,5 @@ void Command::privMsg(Server& server, Client& client, std::vector<std::string> a
 	}
 	catch (std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
 	}
 }

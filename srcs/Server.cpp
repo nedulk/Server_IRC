@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/17 15:44:49 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/17 17:30:38 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,14 +331,17 @@ void Server::printState()
     // }
 }
 
-Client *Server::getClientByName(std::string name)
+Client *Server::getClientByName(std::string name, int mode)
 {
 	for (std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); it++)
 	{
 		if ((*it)->GetNick() == name)
 			return (*it);
 	}
-	throw (std::runtime_error("Client not found"));
+	if (mode == 0)
+		throw (std::runtime_error("Client not found"));
+	else
+		return (NULL);
 }
 
 Client *Server::getClientByFd(int fd)
