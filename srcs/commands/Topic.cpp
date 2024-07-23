@@ -28,13 +28,14 @@ void static setNewTopic(Server& server, Client& client, Channel* channel, std::v
 			break ;
 		topic += *it + " ";
 	}
+	topic.erase(topic.size() - 1);
+	if (topic == ":")
+		topic.clear();
 	channel->setTopic(topic);
 	server.broadcastMsg(":" + client.GetNick() + "!" + client.GetUsername() + "@" +
 				Command::getHostname() + " TOPIC " + channel->getName() + " " + topic + "\r\n",
 				channel->getName(), client, true);
 }
-
-// fix no args cmd
 
 void Command::topicCmd(Server &server, Client &client, std::vector<std::string> args)
 {

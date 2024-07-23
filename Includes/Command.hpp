@@ -41,7 +41,6 @@ class Command
 		static void	inviteCmd(Server& server, Client& client, std::vector<std::string> args);
 		static void	topicCmd(Server& server, Client& client, std::vector<std::string> args);
 		static void	modeCmd(Server& server, Client& client, std::vector<std::string> args);
-
 };
 
 #endif
