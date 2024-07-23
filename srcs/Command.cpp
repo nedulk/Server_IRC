@@ -82,6 +82,7 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 	else if (cmdName == MODE)
 	{
 		std::cout << YELLOW "MODE cmd detected" RESET << std::endl;
+		modeCmd(server, client, args);
 	}
 	else if (cmdName == TOPIC)
 	{
