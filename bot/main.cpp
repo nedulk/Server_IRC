@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:46:47 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/23 13:56:46 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/23 17:24:13 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int main()
     if (bot.connectToServer())
 	{
         bot.authenticate();
-        bot.joinChannel("#testBot");
+        bot.joinChannel("#test");
         bot.listen();
     }
 

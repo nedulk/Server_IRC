@@ -6,18 +6,23 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:34:26 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/23 14:22:44 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/23 15:43:13 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <string>
-#include <cstring>
-#include <vector>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <poll.h>
+#ifndef BOT_HPP
+# define BOT_HPP
+
+# include <iostream>
+# include <algorithm>
+# include <string>
+# include <cstring>
+# include <vector>
+# include <sys/socket.h>
+# include <arpa/inet.h>
+# include <unistd.h>
+# include <poll.h>
+# include <cctype>
 
 class Bot 
 {
@@ -40,3 +45,5 @@ class Bot
 
 		std::string trueMessage(std::string message);
 };
+
+#endif

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:35:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/23 15:06:47 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/23 17:29:09 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,14 @@ void Bot::authenticate()
 	sendRaw("NICK " + nickname + "\r\n");
 	sleep(1);
 	sendRaw("USER " + username + " 0 * :" + username + "\r\n");
+	sleep(1);
+	
 }
 
 void Bot::joinChannel(const std::string& channel)
 {
 	sendRaw("JOIN " + channel + "\r\n");
+	// sendRaw()
 }
 
 void Bot::listen() 
@@ -70,15 +73,20 @@ void Bot::listen()
 			break;
 		}
 		std::string message(buffer);
-		std::cout << "Received: " << message << std::endl;
+		std::cout << "Received: " << message;
 
-		if (trueMessage(message) == "PING\r")
+		std::string trucateMsg = trueMessage(message);
+		if (trucateMsg == "PING")
 		{
-			std::cout << "coucou\n";
-			std::string response = "PONG" + message.substr(4) + "\r\n";
+			std::string response = "PRIVMSG #test :PONG\r\n";
 			sendRaw(response);
 		}
 	}
+}
+
+bool isControlChar(char c)
+{
+    return std::iscntrl(static_cast<unsigned char>(c));
 }
 
 std::string Bot::trueMessage(std::string message)
@@ -88,7 +96,10 @@ std::string Bot::trueMessage(std::string message)
 	std::size_t pos = message.rfind(":");
 	
 	if (pos != std::string::npos)
+	{
 		truncateMsg = message.substr(pos + 1);
+		truncateMsg.erase(std::remove_if(truncateMsg.begin(), truncateMsg.end(), isControlChar), truncateMsg.end());
+	}
 	// std::cout << "|" << truncateMsg << "|" << std::endl;
 	return (truncateMsg);
 }
