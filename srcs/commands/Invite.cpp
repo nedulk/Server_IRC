@@ -9,7 +9,7 @@ void	inviteUser(Server& server, Client& client, std::string& invitedNick, std::s
 	try
 	{
 		Channel	*channel = server.getChannelList().at(channelName);
-		Client	*invitedClient = server.getClientByName(invitedNick);
+		Client	*invitedClient = server.getClientByName(invitedNick, 0);
 		std::string	msg;
 
 		if (channel->getUserList().count(client.GetFd()) == 0)
@@ -42,7 +42,7 @@ void	inviteUser(Server& server, Client& client, std::string& invitedNick, std::s
 	catch (std::exception& e)
 	{
 		client.sendErrorMsg(":ircserv " +
-				(ERR_NOSUCHNICK(client.GetNick(), invitedNick)) + "\r\n");
+				(ERR_NOSUCHNICK(client.GetNick())) + "\r\n");
 		// if (e.what() == "Client not found")
 			// ; // ERR_NOSUCHNICK
 		// else {

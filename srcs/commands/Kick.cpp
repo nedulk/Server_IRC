@@ -90,7 +90,7 @@ static void kickUsers(Server& server, Client& client,
         {
             try
             {
-                Client  *currentUser = server.getClientByName(*it);
+                Client  *currentUser = server.getClientByName(*it, 0);
                 if (userList.count(currentUser->GetFd()) == 0)
                 {
                     client.sendErrorMsg(":ircserv " +
@@ -110,7 +110,7 @@ static void kickUsers(Server& server, Client& client,
             catch (std::exception& e)
             {
                 client.sendErrorMsg(":ircserv " +
-                        (ERR_NOSUCHNICK(client.GetNick(), *it)) + "\r\n");
+                        (ERR_NOSUCHNICK(client.GetNick())) + "\r\n");
             }
             server.broadcastMsg("", channelName, client, true);
         }
