@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 09:34:13 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:21:54 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class Server
 	protected:
 		
 		std::string _Password;
+		std::string _PasswordBot;
 		int _Port; // "ex: port 80" . Point d'acces numerique sur le pc. Permet de differencier les services.
 		int _ServerSocketFd; // Utilisation de la fonction socket() qui va return un fd
 							 // Le socket va etre le point final de communication. "Ex: 12.15.45.34:80"
@@ -36,7 +37,7 @@ class Server
 		Client *Cli;
 		static bool _Signal;
 	public:
-		Server(int port, std::string password);
+		Server(int port, std::string password, std::string passwordBot);
 		~Server();
 		void ServerInit();
 		void ServerSocket();

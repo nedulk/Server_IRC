@@ -6,45 +6,11 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/17 17:30:38 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 17:00:38 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
-
-// informations de l'adresse
-// -> sin_family: entier qui represente la famille de l'adress. IPv4, IPv6 ...
-//                 Pour IPv4 AF_INET.
-// -> sin_port: entier sur 16 bits qui represente le numero de port.
-// -> sin_addr: struct qui contient l'adress IPv4. INADDR_ANY represente l'ip "any"
-//              ce qui signifie que le socket sera lie a toues les interfaces reseau disponibles
-//              sur l'hote. Ex: carte reseau, wifi... chaque interface a une address unique; l'adresse MAC
-// -> sin_zero: rembourage pour rendre la struct de mm taille que sckaddr pour des raisons de compatibilite.
-//				rempli de zeros.
-// 
-// struct sockaddr_in 
-// {
-//  	sa_family_t     sin_family;
-//  	in_port_t       sin_port;
-//  	struct  in_addr sin_addr;
-//  	char            sin_zero[8];
-// };
-
-// Cette structure est utilisee pour surveiller les descripteurs de fichier pour les entrees et sorties (I/O)
-// Utilisee avec poll() en general.
-
-// struct pollfd 
-// {
-// 	int     fd; //-> file descriptor
-//  	short   events; //-> requested events
-//  	short   revents; //-> returned events
-// };
-
-// struct in_addr
-// {
-//  	in_addr_t s_addr;
-// };
 
 bool Server::_Signal = false;
 
@@ -55,7 +21,7 @@ void Server::SignalHandler(int signum)
 }
 
 // -1 permet d'indiquer que le socket n'est pas encore initialise/pas encore ouvert.
-Server::Server(int port, std::string password): _Password(password), _Port(port), _ServerSocketFd(-1)
+Server::Server(int port, std::string password, std::string passwordBot): _Password(password), _PasswordBot(passwordBot), _Port(port), _ServerSocketFd(-1)
 {
 }
 
@@ -180,7 +146,15 @@ void Server::ReceiveNewData(int fd)
 	
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0); // reception de la data
 
-	if (bytes <= 0) // le client est deco
+	if (bytes <= 0 && getClientByFd(fd)->getBot() == true)
+	{
+		std::cout << ITALIC "Bot [" << fd << "]" RESET;
+		std::cout << BRED " disconnected ×" RESET << std::endl;
+		ClearClients(fd);
+		close(fd);
+		throw (std::runtime_error("Bot disconnected"));
+	}
+	if (bytes <= 0 && getClientByFd(fd)->getBot() == false) // le client est deco
 	{
 		std::cout << ITALIC "Client [" << getClientByFd(fd)->GetIp() << "]" << " [" << fd << "]" RESET;
 		std::cout << BRED " disconnected ×" RESET << std::endl;
@@ -230,8 +204,6 @@ void Server::ReceiveNewData(int fd)
 			}
 		}
 	}
-	// DEBUG bytes received ///////
-	// std::cout << BLUE "Client |" << fd << "| : " RESET << buff << "----\n";
 }
 
 void Server::ClearClients(int fd)
@@ -308,27 +280,6 @@ void Server::printState()
 				std::cout << BLACK << "                           " << GREEN << "-----------" << RESET << std::endl;
 		}
 	}
-	// std::cout << BLACK << getCurrentTime() << "    " << YELLOW << "------------------------" << RESET << std::endl;
-	// std::cout << BLACK << getCurrentTime() << "    " << "Channels: " << _Channels.size() << std::endl;
-	// std::cout << BLACK << getCurrentTime() << "    " << GREEN << "-----------" << RESET << std::endl;
-    // if (_channels.size() > 0)
-    // {
-    //     for (size_t i = 0; i < _channels.size(); i++)
-    //     {
-    //         std::cout << BLACK << getCurrentTime() << "    " << "Channel name: " << _channels[i]->getName() << std::endl;
-    //         std::cout << BLACK << getCurrentTime() << "    " << "Channel topic: " << _channels[i]->getTopic() << std::endl;
-    //         for (size_t i = 0; i < getChannels().size(); i++)
-    //         {
-    //             std::vector<Client *> lst = getChannels()[i]->getUserList();
-    //             for (size_t j = 0; j != lst.size(); j++)
-    //             {
-    //                 std::cout << BLACK << getCurrentTime() << "    " << "Client nick: " << lst[j]->getNick() << std::endl;
-    //             }
-    //         }
-    //         if (i < _channels.size() - 1)
-    //             std::cout << BLACK << getCurrentTime() << "    " << GREEN << "-----------" << RESET << std::endl;
-    //     }
-    // }
 }
 
 Client *Server::getClientByName(std::string name, int mode)
