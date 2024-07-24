@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 16:41:11 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:49:05 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,13 +133,21 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 			exit(0);
 		}
 		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
-		if (bytes <= 0)
+		if (bytes <= 0 && newClient->getBot() == false)
 		{
 			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
 			std::cout << BRED " disconnected ×" RESET << std::endl;
 			ClearClients(fd_newClient);
 			close(fd_newClient);
 			throw (std::runtime_error("Client disconnected"));
+		}
+		else if (bytes <= 0 && newClient->getBot() == true)
+		{
+			std::cout << ITALIC "Bot [" << fd_newClient << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
+			ClearClients(fd_newClient);
+			close(fd_newClient);
+			throw (std::runtime_error("Bot disconnected"));
 		}
 		if (std::strncmp(buff_r, "NICK ", 5) == 0 || !compare_remain_line("NICK ").empty())
 		{
@@ -223,13 +231,21 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 			exit(0);
 		}
 		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
-		if (bytes <= 0)
+		if (bytes <= 0 && newClient->getBot() == false)
 		{
 			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
 			std::cout << BRED " disconnected ×" RESET << std::endl;
 			ClearClients(fd_newClient);
 			close(fd_newClient);
 			throw (std::runtime_error("Client disconnected"));
+		}
+		else if (bytes <= 0 && newClient->getBot() == true)
+		{
+			std::cout << ITALIC "Bot [" << fd_newClient << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
+			ClearClients(fd_newClient);
+			close(fd_newClient);
+			throw (std::runtime_error("Bot disconnected"));
 		}
 		if (std::strncmp(buff_r, "USER ", 5) == 0 || !compare_remain_line("USER ").empty())
         {
@@ -313,8 +329,16 @@ void Server::FirstCoHandler(int fd_newClient, Client *newClient)
 		return ;
 	}
 	
-	std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
-	std::cout << BGREEN " connected ✔️" RESET << std::endl;
+	if (newClient->getBot() == false)
+	{	
+		std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
+		std::cout << BGREEN " connected ✔️" RESET << std::endl;
+	}
+	else
+	{
+		std::cout << ITALIC "Bot [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
+		std::cout << BGREEN " connected ✔️" RESET << std::endl;
+	}
 	
 	//WELCOME MSG -> to client 
 	std::string message = RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), Command::getHostname()) + "\n"

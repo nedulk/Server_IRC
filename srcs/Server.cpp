@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 16:43:28 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:51:55 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,15 @@ void Server::ReceiveNewData(int fd)
 	
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0); // reception de la data
 
-	if (bytes <= 0) // le client est deco
+	if (bytes <= 0 && getClientByFd(fd)->getBot() == true)
+	{
+		std::cout << ITALIC "Bot [" << fd << "]" RESET;
+		std::cout << BRED " disconnected ×" RESET << std::endl;
+		ClearClients(fd);
+		close(fd);
+		throw (std::runtime_error("Bot disconnected"));
+	}
+	if (bytes <= 0 && getClientByFd(fd)->getBot() == false) // le client est deco
 	{
 		std::cout << ITALIC "Client [" << getClientByFd(fd)->GetIp() << "]" << " [" << fd << "]" RESET;
 		std::cout << BRED " disconnected ×" RESET << std::endl;
