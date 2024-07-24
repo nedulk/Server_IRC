@@ -67,7 +67,6 @@ class Server
 
 		void	deleteChannel(std::string& channelName);
 		void	createChannel(Client* oper, std::string& channelName, std::string key);
-		void	broadcastMsg(std::string msg, std::string &channelName, Client &sender, bool sendToSelf);
 };
 		
 #endif		

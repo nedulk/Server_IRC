@@ -16,7 +16,7 @@ void static	printTopic(Channel* channel, Client& client)
 	send(client.GetFd(), msg.c_str(), msg.size(), 0);
 }
 
-void static setNewTopic(Server& server, Client& client, Channel* channel, std::vector<std::string>& args)
+void static setNewTopic(Client& client, Channel* channel, std::vector<std::string>& args)
 {
 	std::string msg;
 	std::string	topic;
@@ -32,9 +32,9 @@ void static setNewTopic(Server& server, Client& client, Channel* channel, std::v
 	if (topic == ":")
 		topic.clear();
 	channel->setTopic(topic);
-	server.broadcastMsg(":" + client.GetNick() + "!" + client.GetUsername() + "@" +
+	channel->broadcastMsg(":" + client.GetNick() + "!" + client.GetUsername() + "@" +
 				Command::getHostname() + " TOPIC " + channel->getName() + " " + topic + "\r\n",
-				channel->getName(), client, true);
+				client, true);
 }
 
 void Command::topicCmd(Server &server, Client &client, std::vector<std::string> args)
@@ -62,7 +62,7 @@ void Command::topicCmd(Server &server, Client &client, std::vector<std::string> 
 		if (args.size() == 1)
 			printTopic(channel, client);
 		else
-			setNewTopic(server, client, channel, args);
+			setNewTopic(client, channel, args);
 	}
 	catch (std::exception& e)
 	{

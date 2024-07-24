@@ -22,7 +22,6 @@ private:
 	bool	_inviteOnly;
 	bool	_topicRestrictions;
 	bool	_isChannelKey;
-	bool	_isUserLimit;
 
 	void	isValidName(std::string name);
 
@@ -35,7 +34,6 @@ public:
 	bool					getInviteOnly() const;
 	bool					getTopicRestr() const;
 	bool					getIsChannelKey() const;
-	bool					getIsUserLimit() const;
 	std::string&			getKey();
 	std::string&			getTopic();
 	std::string&			getName();
@@ -52,8 +50,12 @@ public:
 	void	setKey(std::string& key);
 	void	setIsChannelKey(bool state);
 	void	setTopic(std::string& topic);
+	void	setTopicRestr(bool state);
+	void	setInviteOnly(bool state);
+	void	setUserLimit(int limit);
 
 	void	broadcastUserList(Client& client);
+	void	broadcastMsg(std::string msg, Client& sender, bool sendToSelf);
 };
 
 #endif //SERVER_IRC_CHANNEL_HPP

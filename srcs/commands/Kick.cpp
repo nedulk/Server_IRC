@@ -98,11 +98,11 @@ static void kickUsers(Server& server, Client& client,
 
                     continue ;
                 }
-                server.broadcastMsg(":" + client.GetNick() + "!"
+                channel->broadcastMsg(":" + client.GetNick() + "!"
                         + client.GetUsername() + "@"
                         + Command::getHostname() + " KICK "
                         + channelName + " " + *it + " " + comment + "\r\n",
-                        channelName, client, true);
+						client, true);
                 channel->delUser(currentUser);
                 if (channel->getOperators().count(currentUser->GetFd()) != 0)
                     channel->delOperator(currentUser);
@@ -110,9 +110,9 @@ static void kickUsers(Server& server, Client& client,
             catch (std::exception& e)
             {
                 client.sendErrorMsg(":ircserv " +
-                        (ERR_NOSUCHNICK(client.GetNick())) + "\r\n");
+                        (ERR_NOSUCHNICK(client.GetNick(), *it)) + "\r\n");
             }
-            server.broadcastMsg("", channelName, client, true);
+//            channel->broadcastMsg("", client, true);
         }
     }
     catch (std::exception& e)

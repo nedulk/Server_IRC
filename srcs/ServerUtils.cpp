@@ -343,8 +343,9 @@ void Server::createChannel(Client *oper, std::string &channelName, std::string k
 		_channelList[channelName] = newChannel;
 		std::cout << "Channel " + channelName + " successfully created" << std::endl;
 		std::cout << "User " + oper->GetNick() + " successfully joined" << std::endl;
-		broadcastMsg(":" + oper->GetNick() + "!" + oper->GetUsername() + "@" +
-			Command::getHostname() + " JOIN " + channelName + " * :" + oper->GetRealname() + "\r\n", channelName, *oper, true);
+		newChannel->broadcastMsg(":" + oper->GetNick() + "!" + oper->GetUsername() + "@" +
+			Command::getHostname() + " JOIN " + channelName + " * :" + oper->GetRealname() + "\r\n",
+			*oper, true);
 		newChannel->broadcastUserList(*oper);
 	}
 	catch (std::exception& e)

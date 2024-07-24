@@ -93,7 +93,7 @@ void Command::joinChannel(Server& server, Client& sender, std::string &channelNa
 			return ;
 		if (channel->getInviteOnly() && channel->isInvited(sender.GetFd()) == false)
 			throw (std::runtime_error(ERR_INVITEONLYCHAN(channelName + " " + key, channelName)));
-		if (channel->getIsUserLimit() && channel->getUserLimit() + 1 > channel->getUserCount())
+		if (channel->getUserLimit() != -1 && channel->getUserLimit() + 1 > channel->getUserCount())
 			throw (std::runtime_error(ERR_CHANNELISFULL(channelName + " " + key, channelName)));
 		if (channel->getIsChannelKey() && key != channel->getKey())
 			throw (std::runtime_error(ERR_BADCHANNELKEY(channelName + " " + key, channelName)));
@@ -108,13 +108,16 @@ void Command::joinChannel(Server& server, Client& sender, std::string &channelNa
 			std::string topicMsg = RPL_TOPIC(sender.GetNick(), channel->getName(), channel->getTopic()) + "\r\n";
 			send(sender.GetFd(), topicMsg.c_str(), topicMsg.size(), 0);
 		}
-		server.broadcastMsg(":" + sender.GetNick() + "!" + sender.GetUsername() + "@" +
+		channel->broadcastMsg(":" + sender.GetNick() + "!" + sender.GetUsername() + "@" +
 			getHostname() + " JOIN " + channelName + " * :" + sender.GetRealname() + "\r\n",
-			channelName, sender, true);
+			sender, true);
 		channel->broadcastUserList(sender);
 	}
 	catch (std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::string msg = ":ircserv ";
+		msg += e.what();
+		msg += "\r\n";
+		send(sender.GetFd(), msg.c_str(), msg.size(), 0);
 	}
 }

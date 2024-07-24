@@ -358,29 +358,3 @@ std::vector<Client *> Server::getClients()
 {
 	return (_Clients);
 }
-
-void Server::broadcastMsg(std::string msg, std::string& channelName, Client& sender, bool sendToSelf)
-{
-	try
-	{
-		Channel	*channel = _channelList.at(channelName);
-		if (channel->getUserList().count(sender.GetFd()) == 0)
-		{
-			std::cerr << RED << sender.GetNick() << " not in channel " << channelName << RESET << std::endl;
-			return ;
-		}
-
-		std::map<int, Client*> userList = channel->getUserList();
-		for (std::map<int, Client*>::iterator it = userList.begin();
-			it != userList.end();
-			it++)
-		{
-			if (sendToSelf || it->second->GetFd() != sender.GetFd())
-				send(it->second->GetFd(), msg.c_str(), msg.size(), 0);
-		}
-	}
-	catch (std::exception& e)
-	{
-		std::cerr << RED "Channel '" << channelName <<  "' doesn't exist" RESET << std::endl;
-	}
-}

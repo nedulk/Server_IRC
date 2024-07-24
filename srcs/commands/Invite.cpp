@@ -42,11 +42,7 @@ void	inviteUser(Server& server, Client& client, std::string& invitedNick, std::s
 	catch (std::exception& e)
 	{
 		client.sendErrorMsg(":ircserv " +
-				(ERR_NOSUCHNICK(client.GetNick())) + "\r\n");
-		// if (e.what() == "Client not found")
-			// ; // ERR_NOSUCHNICK
-		// else {
-		// }; // ERR_NOSUCHCHANNEL
+				(ERR_NOSUCHNICK(client.GetNick(), invitedNick)) + "\r\n");
 	}
 }
 

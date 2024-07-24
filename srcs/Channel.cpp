@@ -39,7 +39,6 @@ Channel::Channel(std::string& name)
 	_inviteOnly = false;
 	_topicRestrictions = false;
 	_isChannelKey = false;
-	_isUserLimit = false;
 }
 
 Channel::Channel(std::string& name, std::string key)
@@ -52,7 +51,6 @@ Channel::Channel(std::string& name, std::string key)
 	_inviteOnly = false;
 	_topicRestrictions = false;
 	_isChannelKey = true;
-	_isUserLimit = false;
 }
 
 std::map<int, Client*> Channel::getUserList()
@@ -78,10 +76,6 @@ bool Channel::getTopicRestr() const {
 
 bool Channel::getIsChannelKey() const {
 	return (_isChannelKey);
-}
-
-bool Channel::getIsUserLimit() const {
-	return (_isUserLimit);
 }
 
 std::string &Channel::getKey() {
@@ -168,4 +162,36 @@ void Channel::setIsChannelKey(bool state)
 void Channel::setTopic(std::string &topic)
 {
 	_topic = topic;
+}
+
+void Channel::setTopicRestr(bool state)
+{
+	_topicRestrictions = state;
+}
+
+void Channel::setInviteOnly(bool state)
+{
+	_inviteOnly = state;
+}
+
+void Channel::setUserLimit(int limit)
+{
+	_userLimit = limit;
+}
+
+void Channel::broadcastMsg(std::string msg, Client &sender, bool sendToSelf)
+{
+	if (_userList.count(sender.GetFd()) == 0)
+	{
+		std::cerr << RED << sender.GetNick() << " not in channel " << _name << RESET << std::endl;
+		return ;
+	}
+
+	for (std::map<int, Client*>::iterator it = _userList.begin();
+		 it != _userList.end();
+		 it++)
+	{
+		if (sendToSelf || it->second->GetFd() != sender.GetFd())
+			send(it->second->GetFd(), msg.c_str(), msg.size(), 0);
+	}
 }

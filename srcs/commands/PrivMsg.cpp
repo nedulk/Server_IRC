@@ -82,17 +82,17 @@ void Command::privMsg(Server& server, Client& client, std::vector<std::string> a
 			{
 				std::string finalMsg = ":" + client.GetNick() + "!" + getHostname()
 						+ " PRIVMSG " + *it + " :" + msg + "\n" + "\r\n";
-				if ((*it)[0] == '#')
+				if ((*it)[0] == '#' && server.getChannelList().count(*it) != 0)
 				{
-					server.broadcastMsg(finalMsg, *it, client, false);
+					server.getChannelList().at(*it)->broadcastMsg(finalMsg, client, false);
 				}
 				else
 				{
 					Client* receiverClient = server.getClientByName(*it, 1);
 					if (receiverClient == NULL)
 					{
-						std::string err_nick = ERR_NOSUCHNICK(*it);
-						send(client.GetFd(), err_nick.c_str(), (ERR_NOSUCHNICK(*it)).size(), 0);
+						std::string err_nick = ERR_NOSUCHNICK(client.GetNick(), *it);
+						send(client.GetFd(), err_nick.c_str(), (ERR_NOSUCHNICK(client.GetNick(), *it)).size(), 0);
 						std::cout << RED "Error: ERR_NOSUCHNICK " << "[" << client.GetIp() << "] ["
 							<< client.GetFd() << "]" RESET << std::endl;
 						throw(std::runtime_error (""));

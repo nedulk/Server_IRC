@@ -23,8 +23,9 @@ SRC = srcs/main.cpp \
 	  srcs/commands/Part.cpp \
 	  srcs/commands/Who.cpp \
 	  srcs/commands/Invite.cpp \
-	  srcs/commands/Topic.cpp
-#   srcs/commands/Mode.cpp
+	  srcs/commands/Topic.cpp \
+	  srcs/commands/Mode.cpp \
+	  srcs/commands/ModeFlags.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

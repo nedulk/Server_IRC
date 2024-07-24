@@ -18,11 +18,18 @@
 class Command
 {
 	private:
+		static void						limitFlag(bool input, Channel* channel, Client& client, std::string limit);
+		static void						operatorFlag(bool input, Server& server, Channel* channel, Client& client, std::string user);
+		static void						keyFlag(bool input, Channel* channel, Client& client, std::string key);
+		static void						topicFlag(bool input, Channel* channel, Client& client);
+		static void						inviteFlag(bool input, Channel* channel, Client& client);
 		static std::vector<std::string>	getJoinChannels(std::string &arg);
 		static std::vector<std::string>	getJoinKeys(std::string &arg);
 		static void						joinChannel(Server& server, Client& sender, std::string &channelName, std::string key);
+		static void	executeModes(Server& server, Client& client, Channel* channel, std::pair<int, std::string>& flags,
+								std::vector<std::string>& cmdArgs);
+		static void callModes(Server& server, Client& client, Channel* channel, std::string flag, std::string& arg);
 	public:
-
 		Server *server;
 	/////CMD handling /////
 		static std::string RegexCmd(std::string buff);
@@ -40,7 +47,7 @@ class Command
 		static void	whoCmd(Server& server, Client& client, std::vector<std::string> args);
 		static void	inviteCmd(Server& server, Client& client, std::vector<std::string> args);
 		static void	topicCmd(Server& server, Client& client, std::vector<std::string> args);
-		// static void	modeCmd(Server& server, Client& client, std::vector<std::string> args);
+		static void	modeCmd(Server& server, Client& client, std::vector<std::string> args);
 };
 
 #endif

@@ -38,9 +38,9 @@ static void partUser(Server &server, Client &client, std::string& channelName, s
             send(client.GetFd(), msg.c_str(), msg.size(), 0);
             return ;
         }
-        server.broadcastMsg(":" + client.GetNick() + "!" + client.GetUsername() + "@"
+        channel->broadcastMsg(":" + client.GetNick() + "!" + client.GetUsername() + "@"
             + Command::getHostname() + " PART " + channelName + " " + reason + "\r\n",
-                            channelName, client, true);
+			client, true);
         channel->delUser(&client);
         if (channel->getOperators().count(client.GetFd()) != 0)
             channel->delOperator(&client);

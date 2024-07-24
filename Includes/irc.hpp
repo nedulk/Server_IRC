@@ -33,6 +33,7 @@
 # include <ctime>
 # include <climits>
 # include <algorithm>
+#include <sstream>
 
 # define ITALIC "\033[3m"
 # define UNDERLINE "\033[4m"
@@ -64,14 +65,13 @@
 # define BRESET "\033[1;0m"
 
 /////////////////////////////////// ERROR MSG //////////////////////////////////////////////////////////
-# define ERR_NOTEXTTOSEND						"412 :No text to send\n"
-# define ERR_UNKNOWNCOMMAND(cmd)				"421 " + cmd + " :Unknown command\n"
-# define ERR_NONICKNAMEGIVEN					"431 :No nickname given\n"
+# define ERR_NOTEXTTOSEND						"412 :No text to send"
+# define ERR_UNKNOWNCOMMAND(cmd)				"421 " + cmd + " :Unknown command"
+# define ERR_NONICKNAMEGIVEN					"431 :No nickname given"
 # define ERR_PASSWDMISMATCH						"464 :Password incorrect"
 # define ERR_ERRONEUSNICKNAME(nick)				"432 " + nick + " :Erroneous nickname"
 # define ERR_NICKNAMEINUSE(nick)				"433 * " + nick + " :Nickname is already in use"
-# define ERR_NOSUCHNICK(nick)					"401 " + nick + " :No such nick\n"
-
+# define ERR_NOSUCHNICK(input, nick)			"401 " + input + " " + nick + " :No such nick"
 # define ERR_NOSUCHCHANNEL(input, chan)			"403 " + input + " " + chan + " :No such channel"
 # define ERR_CANNOTSENDTOCHAN(input, chan)		"404 " + input + " " + chan + " :Cannot send to channel"
 # define ERR_NOORIGIN(input)					"409 " + input + " :No origin specified"
@@ -82,6 +82,7 @@
 # define ERR_NOTREGISTERED(input)				"451 " + input + " :You have not registered"
 # define ERR_NEEDMOREPARAMS(input, cmd)			"461 " + input + " " + cmd + " :Not enough parameters"
 # define ERR_ALREADYREGISTRED(input)			"462 " + input + " :Unauthorized command (already registered)"
+# define ERR_KEYSET(input, chan)				"467 " + input + " " + chan + " :Channel key already set"
 # define ERR_CHANNELISFULL(input, chan)			"471 " + input + " " + chan + " :Cannot join channel (+l)"
 # define ERR_UNKNOWNMODE(input, mode)			"472 " + input + " " + mode + " :is unknown mode char to me"
 # define ERR_INVITEONLYCHAN(input, chan)		"473 " + input + " " + chan + " :Cannot join channel (+i)"
