@@ -79,11 +79,11 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 		std::cout <<  YELLOW "JOIN cmd detected" RESET << std::endl;
 		joinCmd(server, client, args);
 	}
-	else if (cmdName == MODE)
-	{
-		std::cout << YELLOW "MODE cmd detected" RESET << std::endl;
-		modeCmd(server, client, args);
-	}
+	// else if (cmdName == MODE)
+	// {
+	// 	std::cout << YELLOW "MODE cmd detected" RESET << std::endl;
+	// 	modeCmd(server, client, args);
+	// }
 	else if (cmdName == TOPIC)
 	{
 		std::cout << YELLOW "TOPIC cmd detected" RESET << std::endl;

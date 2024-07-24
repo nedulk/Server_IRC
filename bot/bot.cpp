@@ -6,20 +6,20 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:35:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/23 17:29:09 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/23 18:05:24 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bot.hpp"
 
-Bot::Bot(const std::string& server_ip, int port, const std::string& nickname, const std::string& username): server_ip(server_ip), port(port), nickname(nickname), username(username)
+Bot::Bot(const std::string& server_ip, int port, const std::string& nickname, const std::string& username, const std::string pass): _server_ip(server_ip), _port(port), _nickname(nickname), _username(username), _pass(pass)
 {
 }
 
 bool Bot::connectToServer()
 {
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0) 
+	_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (_sockfd < 0) 
 	{
 		std::cerr << "Error: Unable to create socket" << std::endl;
 		return (false);
@@ -27,10 +27,10 @@ bool Bot::connectToServer()
 
 	struct sockaddr_in server_addr;
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(port);
-	server_addr.sin_addr.s_addr = inet_addr(server_ip.c_str());
+	server_addr.sin_port = htons(_port);
+	server_addr.sin_addr.s_addr = inet_addr(_server_ip.c_str());
 
-	if (connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) 
+	if (connect(_sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) 
 	{
 		std::cerr << "Error: Unable to connect to server" << std::endl;
 		return (false);
@@ -40,16 +40,16 @@ bool Bot::connectToServer()
 
 void Bot::sendRaw(const std::string& message)
 {
-	send(sockfd, message.c_str(), message.length(), 0);
+	send(_sockfd, message.c_str(), message.length(), 0);
 }
 
 void Bot::authenticate() 
 {
-	sendRaw("PASS popo\r\n");
+	sendRaw("PASS " + _pass + "\r\n");
 	sleep(1);
-	sendRaw("NICK " + nickname + "\r\n");
+	sendRaw("NICK " + _nickname + "\r\n");
 	sleep(1);
-	sendRaw("USER " + username + " 0 * :" + username + "\r\n");
+	sendRaw("USER " + _username + " 0 * :" + _username + "\r\n");
 	sleep(1);
 	
 }
@@ -57,7 +57,6 @@ void Bot::authenticate()
 void Bot::joinChannel(const std::string& channel)
 {
 	sendRaw("JOIN " + channel + "\r\n");
-	// sendRaw()
 }
 
 void Bot::listen() 
@@ -66,7 +65,7 @@ void Bot::listen()
 	while (true) 
 	{
 		memset(buffer, 0, sizeof(buffer));
-		int bytes_received = recv(sockfd, buffer, sizeof(buffer) - 1, 0);
+		int bytes_received = recv(_sockfd, buffer, sizeof(buffer) - 1, 0);
 		if (bytes_received <= 0)
 		{
 			std::cerr << "Error: Connection closed or error occurred" << std::endl;
@@ -100,11 +99,10 @@ std::string Bot::trueMessage(std::string message)
 		truncateMsg = message.substr(pos + 1);
 		truncateMsg.erase(std::remove_if(truncateMsg.begin(), truncateMsg.end(), isControlChar), truncateMsg.end());
 	}
-	// std::cout << "|" << truncateMsg << "|" << std::endl;
 	return (truncateMsg);
 }
 
 Bot::~Bot()
 {
-	close(sockfd);
+	close(_sockfd);
 }

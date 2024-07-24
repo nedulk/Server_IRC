@@ -6,7 +6,7 @@
 #    By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/17 12:10:05 by kprigent          #+#    #+#              #
-#    Updated: 2024/07/16 10:38:37 by kprigent         ###   ########.fr        #
+#    Updated: 2024/07/23 17:39:20 by kprigent         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,8 +23,8 @@ SRC = srcs/main.cpp \
 	  srcs/commands/Part.cpp \
 	  srcs/commands/Who.cpp \
 	  srcs/commands/Invite.cpp \
-	  srcs/commands/Topic.cpp \
-	  srcs/commands/Mode.cpp
+	  srcs/commands/Topic.cpp
+#   srcs/commands/Mode.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/17 15:52:33 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 14:47:29 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,29 @@
 
 void Server::splitAndKeepLastTwo(const std::string& str)
 {
-    char* cstr = new char[str.length() + 1];
-    std::strcpy(cstr, str.c_str());
+	char* cstr = new char[str.length() + 1];
+	std::strcpy(cstr, str.c_str());
 
-    char* token = std::strtok(cstr, "\n\r");
-    std::string lastToken;
-    while (token != NULL)
-    {
-        lastToken = token;
-        token = std::strtok(NULL, "\n\r");
-    }
-    if (!lastToken.empty())
-        remain_line = lastToken;
-    delete[] cstr;
+	char* token = std::strtok(cstr, "\n\r");
+	while (token != NULL)
+	{
+		std::string tokenStr = token;
+		tokenStr.erase(std::remove(tokenStr.begin(), tokenStr.end(), '\n'), tokenStr.end());
+		tokenStr.erase(std::remove(tokenStr.begin(), tokenStr.end(), '\r'), tokenStr.end());
+		remain_line.push_back(tokenStr);
+		token = std::strtok(NULL, "\n\r");
+	}
+	delete[] cstr;
+}
+
+std::string Server::compare_remain_line(std::string str)
+{
+	for (std::vector<std::string>::iterator it = remain_line.begin(); it != remain_line.end(); ++it)
+	{
+		if (std::strncmp(str.c_str(), it->c_str(), 5) == 0)
+			return (*it);
+	}
+	return ("");
 }
 
 int	Server::NickCheck_oc(std::string buff_rr)
@@ -40,6 +50,64 @@ int	Server::NickCheck_oc(std::string buff_rr)
 		}
 	}
 	return (0);
+}
+
+void Server::PasswordCheck(int fd_newClient)
+{
+	char buff_r[1024];
+	for (int i = 0; i < 1024; i++)
+		buff_r[i] = '\0';
+	
+	while (1)
+	{
+		if (Server::_Signal == true)
+		{
+			ClearAllClients();
+			CloseFds();
+			exit(0);
+		}
+		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+		if (bytes <= 0)
+		{
+			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
+			ClearClients(fd_newClient);
+			close(fd_newClient);
+			throw (std::runtime_error("Client disconnected"));
+		}
+		if (std::strncmp(buff_r, "PASS ", 5) == 0)
+		{
+			splitAndKeepLastTwo(buff_r);
+			char *buff_rr = buff_r + 5;
+			while (*buff_rr == ' ')
+				buff_rr++;
+			char *p = buff_rr;
+			while (*p != '\0')
+			{
+				if (*p == '\n' || *p == '\r')
+				{
+					*p = '\0';
+					break;
+				}
+				p++;
+			}
+			if(std::strcmp(buff_rr, this->_Password.c_str()) == 0)
+			{	
+				for (int i = 0; i < 1024; i++)
+					buff_r[i] = '\0';
+				break;
+			}
+			else 
+			{
+				std::string buff_rr_str(buff_rr);
+				std::string message = ERR_PASSWDMISMATCH;
+				send(fd_newClient, message.c_str(), message.size(), 0);
+				std::cout << RED "Error: ERR_PASSWDMISMATCH [" << fd_newClient << "]" RESET << std::endl;
+				for (int i = 0; i < 1024; i++)
+					buff_r[i] = '\0';
+			}
+		}
+	}	
 }
 
 void Server::NickCheck(int fd_newClient, Client *newClient)
@@ -64,13 +132,18 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 			std::cout << BRED " disconnected ×" RESET << std::endl;
 			ClearClients(fd_newClient);
 			close(fd_newClient);
-			throw (std::runtime_error("Client disconected"));
+			throw (std::runtime_error("Client disconnected"));
 		}
-		if (std::strncmp(buff_r, "NICK ", 5) == 0)
+		if (std::strncmp(buff_r, "NICK ", 5) == 0 || !compare_remain_line("NICK ").empty())
 		{
-			splitAndKeepLastTwo(buff_r);
 			char *buff_rr;
-			buff_rr = buff_r + 5;
+			std::string result = compare_remain_line("NICK ");
+			if (!result.empty())
+				buff_rr = const_cast<char*>(result.c_str()) + 5;
+			else
+				buff_rr = buff_r + 5;
+			if (compare_remain_line("USER ").empty())
+				splitAndKeepLastTwo(buff_r);
 			while (*buff_rr == ' ')
 				buff_rr++;
 			char *p = buff_rr;
@@ -124,63 +197,6 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 	regfree(&regex);
 }
 
-void Server::PasswordCheck(int fd_newClient)
-{
-	char buff_r[1024];
-	for (int i = 0; i < 1024; i++)
-		buff_r[i] = '\0';
-	
-	while (1)
-	{
-		if (Server::_Signal == true)
-		{
-			ClearAllClients();
-			CloseFds();
-			exit(0);
-		}
-		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
-		if (bytes <= 0)
-		{
-			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
-			std::cout << BRED " disconnected ×" RESET << std::endl;
-			ClearClients(fd_newClient);
-			close(fd_newClient);
-			throw (std::runtime_error("Client disconected"));
-		}
-		if (std::strncmp(buff_r, "PASS ", 5) == 0)
-		{
-			char *buff_rr = buff_r + 5;
-			while (*buff_rr == ' ')
-				buff_rr++;
-			char *p = buff_rr;
-			while (*p != '\0')
-			{
-				if (*p == '\n' || *p == '\r')
-				{
-					*p = '\0';
-					break;
-				}
-				p++;
-			}
-			if(std::strcmp(buff_rr, this->_Password.c_str()) == 0)
-			{	
-				for (int i = 0; i < 1024; i++)
-					buff_r[i] = '\0';
-				break;
-			}
-			else 
-			{
-				std::string buff_rr_str(buff_rr);
-				std::string message = ERR_PASSWDMISMATCH;
-				send(fd_newClient, message.c_str(), message.size(), 0);
-				std::cout << RED "Error: ERR_PASSWDMISMATCH [" << fd_newClient << "]" RESET << std::endl;
-				for (int i = 0; i < 1024; i++)
-					buff_r[i] = '\0';
-			}
-		}
-	}	
-}
-
 void Server::UserCheck(int fd_newClient, Client *newClient)
 {
     char buff_r[1024];
@@ -205,13 +221,12 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 			close(fd_newClient);
 			throw (std::runtime_error("Client disconnected"));
 		}
-		if (std::strncmp(buff_r, "USER ", 5) == 0 || std::strncmp(remain_line.c_str(), "USER ", 5) == 0 )
+		if (std::strncmp(buff_r, "USER ", 5) == 0 || !compare_remain_line("USER ").empty())
         {
 			char *buff_rr;
-			if (std::strncmp(remain_line.c_str(), "USER ", 5) == 0)
-			{
-				buff_rr = (char *)remain_line.c_str() + 5;
-			}
+			std::string result = compare_remain_line("USER ");
+			if (!result.empty())
+				buff_rr = const_cast<char*>(result.c_str()) + 5;
 			else
 				buff_rr = buff_r + 5;
 			while (*buff_rr == ' ')
