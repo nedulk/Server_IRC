@@ -64,7 +64,8 @@ void Command::joinCmd(Server& server, Client& sender, std::vector<std::string> &
 		std::cout << "channel : '" << *it << "'" << std::endl;
 	}
 	args.erase(args.begin());
-	keys = getJoinKeys(args.front());
+	if (!args.empty())
+		keys = getJoinKeys(args.front());
 	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); it++)
 	{
 		if (keys.empty())
@@ -92,16 +93,16 @@ void Command::joinChannel(Server& server, Client& sender, std::string &channelNa
 		if (userList.count(sender.GetFd()) != 0)
 			return ;
 		if (channel->getInviteOnly() && channel->isInvited(sender.GetFd()) == false)
-			throw (std::runtime_error(ERR_INVITEONLYCHAN(channelName + " " + key, channelName)));
+			throw (std::runtime_error(ERR_INVITEONLYCHAN(sender.GetNick(), channelName)));
 		if (channel->getUserLimit() != -1 && channel->getUserLimit() + 1 > channel->getUserCount())
-			throw (std::runtime_error(ERR_CHANNELISFULL(channelName + " " + key, channelName)));
+			throw (std::runtime_error(ERR_CHANNELISFULL(sender.GetNick(), channelName)));
 		if (channel->getIsChannelKey() && key != channel->getKey())
-			throw (std::runtime_error(ERR_BADCHANNELKEY(channelName + " " + key, channelName)));
+			throw (std::runtime_error(ERR_BADCHANNELKEY(sender.GetNick(), channelName)));
 
 		channel->addUser(&sender);
 		if (channel->isInvited(sender.GetFd()))
 			channel->delInvite(sender.GetFd());
-		sender.joinedChannel();
+		sender.joinedChannel(channel);
 
 		if (!channel->getTopic().empty())
 		{

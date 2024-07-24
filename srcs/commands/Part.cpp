@@ -44,7 +44,7 @@ static void partUser(Server &server, Client &client, std::string& channelName, s
         channel->delUser(&client);
         if (channel->getOperators().count(client.GetFd()) != 0)
             channel->delOperator(&client);
-        client.leftChannel();
+        client.leftChannel(channel);
         if (channel->getUserCount() == 0)
         {
             server.deleteChannel(channelName);
@@ -77,7 +77,5 @@ void Command::partCmd(Server &server, Client &client, std::vector<std::string> a
     if (!args.empty())
         reason = args.front();
     for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); ++it)
-    {
         partUser(server, client, *it, reason);
-    }
 }

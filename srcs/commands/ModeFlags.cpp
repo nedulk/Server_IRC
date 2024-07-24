@@ -50,6 +50,8 @@ void	Command::keyFlag(bool input, Channel *channel, Client& client, std::string 
 			client.sendErrorMsg(":ircserv " + (ERR_NEEDMOREPARAMS(client.GetNick(), "MODE -k")) + "\r\n");
 		return ;
 	}
+	std::cout << channel->getKey() << std::endl;
+	std::cout << channel->getIsChannelKey() << std::endl;
 	if (input != channel->getIsChannelKey()
 	&& ((channel->getIsChannelKey() && key == channel->getKey())
 	|| !channel->getIsChannelKey()))
@@ -104,14 +106,6 @@ void	Command::limitFlag(bool input, Channel *channel, Client& client, std::strin
 	std::string	mode;
 	long		userLimit = 0;
 
-	if (limit.empty())
-	{
-		if (input == true)
-			client.sendErrorMsg(":ircserv " + (ERR_NEEDMOREPARAMS(client.GetNick(), "MODE +l")) + "\r\n");
-		else
-			client.sendErrorMsg(":ircserv " + (ERR_NEEDMOREPARAMS(client.GetNick(), "MODE -l")) + "\r\n");
-		return ;
-	}
 	if (input == false)
 	{
 		if (channel->getUserLimit() == -1)
@@ -133,7 +127,7 @@ void	Command::limitFlag(bool input, Channel *channel, Client& client, std::strin
 			break ;
 		userLimit = userLimit * 10 + (*it - '0');
 	}
-	if (userLimit > INT_MAX || userLimit <= 0)
+	if (userLimit > INT_MAX || userLimit <= 0 || userLimit == channel->getUserLimit())
 		return ;
 	std::ostringstream ss;
 	ss << userLimit;

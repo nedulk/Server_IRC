@@ -18,7 +18,6 @@ Client::Client(): _bot(false)
 	this->_Nickname = "";
 	this->_Realname = "";
 	this->_Username = "";
-	this->_joinedChannels = 0;
 }
 
 Client::~Client()
@@ -96,17 +95,24 @@ std::string Client::GetRealname()
 	return (this->_Realname);
 }
 
-void Client::joinedChannel()
+void Client::joinedChannel(Channel *channel)
 {
-	_joinedChannels++;
+	_joinedChannels.push_back(channel);
 }
 
-void Client::leftChannel()
+void Client::leftChannel(Channel *channel)
 {
-	_joinedChannels--;
+	for (std::vector<Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+	{
+		if (*it == channel)
+		{
+			_joinedChannels.erase(it);
+			break ;
+		}
+	}
 }
 
-int Client::getJoinedChannels()
+std::vector<Channel*> Client::getJoinedChannels()
 {
 	return (_joinedChannels);
 }

@@ -16,6 +16,7 @@
 # include "irc.hpp"
 
 class Server;
+class Channel;
 
 class Client
 {
@@ -30,12 +31,8 @@ class Client
 		std::string _Hostname;
 		std::string _Realname;
 
-		int	_joinedChannels;
+		std::vector<Channel *> _joinedChannels;
 		bool _bot;
-		// change joinedChannels to vector<Channel *>
-		// fix getJoinedChannels() to match change
-		// should be easier to delete client from everywhere
-		//			when it quits the server
 
 	public:
 		Client();
@@ -63,9 +60,9 @@ class Client
 		void SetRealname(std::string realname);
 		std::string GetRealname();
 
-		void	joinedChannel();
-		void	leftChannel();
-		int		getJoinedChannels();
+		void	joinedChannel(Channel *channel);
+		void	leftChannel(Channel *channel);
+		std::vector<Channel *>	getJoinedChannels();
 
 		void	sendErrorMsg(std::string msg);
 };

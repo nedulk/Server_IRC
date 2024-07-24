@@ -209,6 +209,22 @@ void Server::ReceiveNewData(int fd)
 void Server::ClearClients(int fd)
 {
 	// Supression d'un client dans la liste. Ex: deconnexion
+	try
+	{
+		Client	*client = getClientByFd(fd);
+		std::vector<Channel *> joinedChannels = client->getJoinedChannels();
+
+		for (std::vector<Channel*>::iterator it = joinedChannels.begin(); it != joinedChannels.end(); ++it)
+		{
+			(*it)->delUser(client);
+			if ((*it)->getOperators().count(client->GetFd()) != 0)
+				(*it)->delOperator(client);
+		}
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Unexpected problem: " << e.what() << std::endl;
+	}
 	for (std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); ++it) // pre-incrementation par convention
 	{																		  			   // ++it incremente la valeur et retourne 			
 		if ((*it)->GetFd() == fd)														   // la valeur incrementee
@@ -218,7 +234,6 @@ void Server::ClearClients(int fd)
 			break ;
 		}
 	}
-
 	for (std::vector<struct pollfd>::iterator it = fds.begin(); it != fds.end(); ++it)
 	{
 		if (it->fd == fd)

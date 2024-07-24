@@ -123,10 +123,13 @@ void	Command::modeCmd(Server &server, Client &client, std::vector<std::string> a
 	std::string									msg;
 	Channel										*channel;
 
+
 	args.erase(std::remove_if(args.begin(), args.end(), isEmpty), args.end());
 	args.erase(args.begin());
 	if (args.empty())
 	{
+		// need to print active modes if no argument
+		// shouldn't send an error msg
 		client.sendErrorMsg(":ircserv " + (ERR_NEEDMOREPARAMS(client.GetNick(), "MODE")) + "\r\n");
 		return ;
 	}

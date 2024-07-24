@@ -45,13 +45,17 @@ void Command::topicCmd(Server &server, Client &client, std::vector<std::string> 
 		client.sendErrorMsg(":ircserv " + (ERR_NEEDMOREPARAMS(client.GetNick(), "TOPIC")) + "\r\n");
 		return ;
 	}
-	try
-	{
-		Channel	*channel = server.getChannelList().at(args.front());
+	try {
+		Channel *channel = server.getChannelList().at(args.front());
 
 		if (channel->getUserList().count(client.GetFd()) == 0)
 		{
 			client.sendErrorMsg(":ircserv " + (ERR_NOTONCHANNEL(client.GetNick(), args.front())) + "\r\n");
+			return;
+		}
+		if (args.size() == 1)
+		{
+			printTopic(channel, client);
 			return ;
 		}
 		if (channel->getTopicRestr() && channel->getOperators().count(client.GetFd()) == 0)
@@ -59,10 +63,7 @@ void Command::topicCmd(Server &server, Client &client, std::vector<std::string> 
 			client.sendErrorMsg(":ircserv " + (ERR_CHANOPRIVSNEEDED(client.GetNick(), args.front())) + "\r\n");
 			return ;
 		}
-		if (args.size() == 1)
-			printTopic(channel, client);
-		else
-			setNewTopic(client, channel, args);
+		setNewTopic(client, channel, args);
 	}
 	catch (std::exception& e)
 	{
