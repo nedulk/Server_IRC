@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 14:47:29 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 15:59:51 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,8 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 							<< newClient->GetFd() << "]" RESET << std::endl;
 						for (int i = 0; i < 1024; i++)
 							buff_r[i] = '\0';
+						for (std::vector<std::string>::iterator it = remain_line.begin(); it != remain_line.end(); ++it)
+							*it = "";
 					}
 				}
 				regfree(&regex); 
@@ -184,13 +186,14 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 			else
 			{
 				std::string buff_rr_str(buff_rr);
-				std::string message = ERR_NICKNAMEINUSE(buff_rr_str);
+				std::string message = ERR_NICKNAMEINUSE(buff_rr_str) + "\n";
 				send(fd_newClient, message.c_str(), message.size(), 0);
 				std::cout << RED "Error: ERR_NICKNAMEINUSE " << "[" << newClient->GetIp() << "] ["
 						<< newClient->GetFd() << "]" RESET << std::endl;
 				for (int i = 0; i < 1024; i++)
 					buff_r[i] = '\0';
-				
+				for (std::vector<std::string>::iterator it = remain_line.begin(); it != remain_line.end(); ++it)
+					*it = "";
 			}
 		}
 	}
@@ -271,12 +274,14 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 						newClient->SetUsername(newClient->GetNick());
 					else
 						newClient->SetUsername(buff_rrr);
+					for (std::vector<std::string>::iterator it = remain_line.begin(); it != remain_line.end(); ++it)
+						*it = "";
 					regfree(&regex);
 					break ;
 				}
 			}
 		}
-    	// regfree(&regex);
+    	regfree(&regex);
     }	
 }
 
