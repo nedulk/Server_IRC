@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 17:17:38 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 17:25:32 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,7 +289,6 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 						}
 						buff_rrr++;
 					}
-					std::cout << result << std::endl;
 					newClient->SetUsername(result);
 					while(*buff_rrr != ':')
 						buff_rrr++;
