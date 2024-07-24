@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/17 17:30:38 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:43:28 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void Server::SignalHandler(int signum)
 }
 
 // -1 permet d'indiquer que le socket n'est pas encore initialise/pas encore ouvert.
-Server::Server(int port, std::string password): _Password(password), _Port(port), _ServerSocketFd(-1)
+Server::Server(int port, std::string password, std::string passwordBot): _Password(password), _PasswordBot(passwordBot), _Port(port), _ServerSocketFd(-1)
 {
 }
 

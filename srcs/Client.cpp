@@ -6,13 +6,13 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:36:18 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/16 13:33:47 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:42:32 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client()
+Client::Client(): _bot(false)
 {
 	this->_Hostname = "";
 	this->_Nickname = "";
@@ -23,6 +23,17 @@ Client::Client()
 
 Client::~Client()
 {
+}
+
+bool Client::getBot()
+{
+	return (this->_bot);
+}
+
+void Client::setBot()
+{
+	if (this->_bot == false)
+		this->_bot = true;
 }
 
 void Client::SetFd(int fd)

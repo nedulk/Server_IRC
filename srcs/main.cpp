@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:11:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/14 16:45:00 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:17:01 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@
 
 int main(int argc, char **argv)
 {
-	if (argc != 3)
+	if (argc != 4)
 		std::cout << RED "Missing arguments" RESET << std::endl;
 	else
 	{
-		Server server(std::atoi(argv[1]), argv[2]);
+		Server server(std::atoi(argv[1]), argv[2], argv[3]);
 		///////////////////////// MONITORING DEBUG ////////////////////////////////////////////
 		// std::thread serverStateThread([&server]()
 		// {

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 15:59:51 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:41:11 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,13 @@ void Server::PasswordCheck(int fd_newClient)
 					break;
 				}
 				p++;
+			}
+			if(std::strcmp(buff_rr, this->_PasswordBot.c_str()) == 0)
+			{	
+				getClientByFd(fd_newClient)->setBot();
+				for (int i = 0; i < 1024; i++)
+					buff_r[i] = '\0';
+				break;
 			}
 			if(std::strcmp(buff_rr, this->_Password.c_str()) == 0)
 			{	

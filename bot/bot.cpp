@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:35:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/23 18:05:24 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:04:32 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void Bot::listen()
 		std::string trucateMsg = trueMessage(message);
 		if (trucateMsg == "PING")
 		{
-			std::string response = "PRIVMSG #test :PONG\r\n";
+			std::string response = "PRIVMSG #PingBot :PONG\r\n";
 			sendRaw(response);
 		}
 	}
