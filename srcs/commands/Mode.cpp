@@ -2,7 +2,7 @@
 // Created by trcgab on 7/22/24.
 //
 
-#include "irc.hpp"
+// #include "irc.hpp"
 
 static int	getFlags(std::vector<std::pair<int, std::string> >& flags, std::string& arg)
 {

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 11:42:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/14 17:18:02 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/23 17:39:44 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class Command
 		static void	whoCmd(Server& server, Client& client, std::vector<std::string> args);
 		static void	inviteCmd(Server& server, Client& client, std::vector<std::string> args);
 		static void	topicCmd(Server& server, Client& client, std::vector<std::string> args);
-		static void	modeCmd(Server& server, Client& client, std::vector<std::string> args);
+		// static void	modeCmd(Server& server, Client& client, std::vector<std::string> args);
 };
 
 #endif

@@ -6,31 +6,37 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:34:26 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/23 14:22:44 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/23 18:04:22 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <string>
-#include <cstring>
-#include <vector>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <poll.h>
+#ifndef BOT_HPP
+# define BOT_HPP
+
+# include <iostream>
+# include <algorithm>
+# include <string>
+# include <cstring>
+# include <vector>
+# include <sys/socket.h>
+# include <arpa/inet.h>
+# include <unistd.h>
+# include <poll.h>
+# include <cctype>
 
 class Bot 
 {
 	private:
-		int sockfd;
-		std::string server_ip;
-		int port;
-		std::string nickname;
-		std::string username;
+		int _sockfd;
+		std::string _server_ip;
+		int _port;
+		std::string _nickname;
+		std::string _username;
+		std::string _pass;
 
 	public:
 		
-		Bot(const std::string& server_ip, int port, const std::string& nickname, const std::string& username);
+		Bot(const std::string& server_ip, int port, const std::string& nickname, const std::string& username, const std::string pass);
 		bool connectToServer();
 		void sendRaw(const std::string& message);
 		void authenticate();
@@ -40,3 +46,5 @@ class Bot
 
 		std::string trueMessage(std::string message);
 };
+
+#endif
