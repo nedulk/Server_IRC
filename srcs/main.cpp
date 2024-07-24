@@ -6,19 +6,11 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:11:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 16:17:01 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 17:00:56 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "irc.hpp"
-
-//////////////// MONITORING DEBUG ////////
-// #include <thread> 						//
-// #include <atomic>						//
-// #include <mutex>						//	
-// std::atomic<bool> running(true);		//
-// std::mutex cout_mutex;					//
-//////////////////////////////////////////
 
 int main(int argc, char **argv)
 {
@@ -27,22 +19,6 @@ int main(int argc, char **argv)
 	else
 	{
 		Server server(std::atoi(argv[1]), argv[2], argv[3]);
-		///////////////////////// MONITORING DEBUG ////////////////////////////////////////////
-		// std::thread serverStateThread([&server]()
-		// {
-		// 	while (running)
-		// 	{
-		// 		cout_mutex.lock();
-		// 		std::cout << "\033[2J\033[H";
-		// 		std::cout << YELLOW << "================= SERVER STATE =================" << RESET << std::endl;
-		// 		server.printState();
-		// 		cout_mutex.unlock();
-		// 		std::this_thread::sleep_for(std::chrono::seconds(1));
-		// 	}
-		// });
-		// serverStateThread.detach();
-		//////////////////////////////////////////////////////////////////////////////////////
-		
 		std::cout << YELLOW << "===================== SERVER IRC =====================" << RESET << std::endl;
 		try
 		{

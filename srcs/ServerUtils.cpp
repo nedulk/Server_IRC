@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 16:49:05 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/24 17:17:38 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,6 +280,17 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 				if (!ret)
 				{
 					char *buff_rrr = buff_rr;
+					std::string result;
+					while (*buff_rrr != '0')
+					{
+						if (*buff_rrr != ' ')
+						{
+							result += *buff_rrr;
+						}
+						buff_rrr++;
+					}
+					std::cout << result << std::endl;
+					newClient->SetUsername(result);
 					while(*buff_rrr != ':')
 						buff_rrr++;
 					buff_rrr++;
@@ -293,10 +304,7 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 						}
 						p++;
 					}
-					if ((std::string)buff_rrr == "realname")
-						newClient->SetUsername(newClient->GetNick());
-					else
-						newClient->SetUsername(buff_rrr);
+					newClient->SetRealname(buff_rrr);
 					for (std::vector<std::string>::iterator it = remain_line.begin(); it != remain_line.end(); ++it)
 						*it = "";
 					regfree(&regex);
