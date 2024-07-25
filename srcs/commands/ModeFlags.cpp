@@ -97,7 +97,7 @@ void	Command::operatorFlag(bool input, Server& server, Channel *channel, Client&
 		mode = "-o";
 	channel->broadcastMsg(":" + client.GetNick() + "!" + client.GetUsername() + "@"
 						  + Command::getHostname() + " MODE " + channel->getName() + " "
-						  + mode + " " + client.GetNick() + " " + user->GetNick() + "\r\n",
+						  + mode + " " + user->GetNick() + "\r\n",
 						  client, true);
 }
 

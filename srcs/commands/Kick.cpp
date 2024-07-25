@@ -106,13 +106,18 @@ static void kickUsers(Server& server, Client& client,
                 channel->delUser(currentUser);
                 if (channel->getOperators().count(currentUser->GetFd()) != 0)
                     channel->delOperator(currentUser);
+				if (channel->getUserCount() == 0)
+				{
+					server.deleteChannel(channelName);
+					delete channel;
+					return ;
+				}
             }
             catch (std::exception& e)
             {
                 client.sendErrorMsg(":ircserv " +
                         (ERR_NOSUCHNICK(client.GetNick(), *it)) + "\r\n");
             }
-//            channel->broadcastMsg("", client, true);
         }
     }
     catch (std::exception& e)

@@ -216,6 +216,7 @@ void Server::ClearClients(int fd)
 
 		for (std::vector<Channel*>::iterator it = joinedChannels.begin(); it != joinedChannels.end(); ++it)
 		{
+			std::cout << "joinedChannel : " << (*it)->getName() << std::endl;
 			(*it)->delUser(client);
 			if ((*it)->getOperators().count(client->GetFd()) != 0)
 				(*it)->delOperator(client);

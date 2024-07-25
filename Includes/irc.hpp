@@ -68,7 +68,7 @@
 # define ERR_NOTEXTTOSEND						"412 :No text to send"
 # define ERR_UNKNOWNCOMMAND(cmd)				"421 " + cmd + " :Unknown command"
 # define ERR_NONICKNAMEGIVEN					"431 :No nickname given"
-# define ERR_PASSWDMISMATCH						"464 :Password incorrect"
+# define ERR_PASSWDMISMATCH						"464 :Password incorrect\r\n"
 # define ERR_ERRONEUSNICKNAME(nick)				"432 " + nick + " :Erroneous nickname"
 # define ERR_NICKNAMEINUSE(nick)				"433 * " + nick + " :Nickname is already in use"
 # define ERR_NOSUCHNICK(input, nick)			"401 " + input + " " + nick + " :No such nick"

@@ -391,6 +391,7 @@ void Server::createChannel(Client *oper, std::string &channelName, std::string k
 			Command::getHostname() + " JOIN " + channelName + " * :" + oper->GetRealname() + "\r\n",
 			*oper, true);
 		newChannel->broadcastUserList(*oper);
+		oper->joinedChannel(newChannel);
 	}
 	catch (std::exception& e)
 	{
