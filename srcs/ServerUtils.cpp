@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/25 11:15:17 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 11:53:50 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	Server::NickCheck_oc(std::string buff_rr)
 {
 	if (!_Clients.empty())
 	{
+		if (buff_rr == "Bot")
 		for(std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
 		{
 			if ((*it)->GetNick() == buff_rr)
@@ -372,6 +373,8 @@ void Server::createChannel(Client *oper, std::string &channelName, std::string k
 {
 	try
 	{
+		if (channelName == "#PingBot" && oper->getBot() == false)
+			throw(std::runtime_error("Error: A client cannot create this Channel due to restrictions."));
 		Channel	*newChannel = new Channel(channelName);
 
 		if (!key.empty())

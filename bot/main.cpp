@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:46:47 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 15:04:22 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 11:31:31 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int main(int argc, char **argv) 
 {
-    if (argc == 2)
+    if (argc == 3)
     {
-        Bot bot("127.0.0.1", 6667, "Bot", "Bot", argv[1]);
+        Bot bot("127.0.0.1", atoi(argv[2]), "Bot", "Bot", argv[1]);
         if (bot.connectToServer())
         {
             bot.authenticate();
@@ -25,5 +25,5 @@ int main(int argc, char **argv)
         }
         return (0);
     }
-    std::cout << "One argument needed (password)" << std::endl;
+    std::cout << "Two arguments needed [First]->password [Second]->port" << std::endl;
 }
