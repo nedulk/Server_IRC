@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:34:26 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/23 18:04:22 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 10:57:48 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Bot
 		std::string _nickname;
 		std::string _username;
 		std::string _pass;
+		static bool _Signal;
 
 	public:
 		
@@ -45,6 +46,7 @@ class Bot
 		~Bot();
 
 		std::string trueMessage(std::string message);
+		static void SignalHandler(int signum);
 };
 
 #endif

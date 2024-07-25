@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 16:21:54 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 11:22:25 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ class Server
 		void CloseFds();
 		void ClearClients(int fd);
 		void ClearAllClients();
+		void ClearAllChannels();
 		void printState();
 
 		Client*	getClientByName(std::string name, int mode);

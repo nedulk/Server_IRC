@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/25 10:17:46 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 11:15:17 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void Server::PasswordCheck(int fd_newClient)
 	{
 		if (Server::_Signal == true)
 		{
+			ClearAllChannels();
 			ClearAllClients();
 			CloseFds();
 			exit(0);
@@ -128,6 +129,7 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 	{
 		if (Server::_Signal == true)
 		{
+			ClearAllChannels();
 			ClearAllClients();
 			CloseFds();
 			exit(0);
@@ -226,6 +228,7 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
     {
         if (Server::_Signal == true)
 		{
+			ClearAllChannels();
 			ClearAllClients();
 			CloseFds();
 			exit(0);

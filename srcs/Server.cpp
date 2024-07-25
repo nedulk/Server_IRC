@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/25 10:42:19 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 11:22:02 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void Server::ServerInit()
 			}
 		}
 	}
+	ClearAllChannels();
 	ClearAllClients();
 	CloseFds();
 }
@@ -256,6 +257,13 @@ void Server::ClearAllClients()
 	// {
 	// 	it_fds = fds.erase(it_fds);
 	// }
+}
+
+void Server::ClearAllChannels()
+{
+	for (std::map<std::string, Channel*>::iterator it = _channelList.begin(); it != _channelList.end(); ++it)
+		delete it->second;
+	_channelList.clear();
 }
 
 void Server::CloseFds()

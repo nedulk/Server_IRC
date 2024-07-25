@@ -6,11 +6,19 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:35:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 16:04:32 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 11:01:13 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bot.hpp"
+
+bool Bot::_Signal = false;
+
+void Bot::SignalHandler(int signum)
+{
+	(void)signum;
+	Bot::_Signal = true;
+}
 
 Bot::Bot(const std::string& server_ip, int port, const std::string& nickname, const std::string& username, const std::string pass): _server_ip(server_ip), _port(port), _nickname(nickname), _username(username), _pass(pass)
 {
@@ -62,7 +70,7 @@ void Bot::joinChannel(const std::string& channel)
 void Bot::listen() 
 {
 	char buffer[1024];
-	while (true) 
+	while (Bot::_Signal == false) 
 	{
 		memset(buffer, 0, sizeof(buffer));
 		int bytes_received = recv(_sockfd, buffer, sizeof(buffer) - 1, 0);
