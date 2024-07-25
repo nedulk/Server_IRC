@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/25 11:53:50 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 12:07:25 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ int	Server::NickCheck_oc(std::string buff_rr)
 {
 	if (!_Clients.empty())
 	{
-		if (buff_rr == "Bot")
 		for(std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
 		{
 			if ((*it)->GetNick() == buff_rr)
@@ -181,7 +180,8 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 				if (!ret)
 				{	
 					ret = regexec(&regex, buff_rr, 0, NULL, 0);
-					if (!ret)
+					if ((!ret && newClient->getBot() == false && strcmp(buff_rr, "Bot") != 0)
+						|| (!ret && newClient->getBot() == true && strcmp(buff_rr, "Bot") == 0))
 					{
 						newClient->SetNick(buff_rr);
 						break ;
@@ -189,7 +189,7 @@ void Server::NickCheck(int fd_newClient, Client *newClient)
 					else
 					{
 						std::string buff_rr_str(buff_rr);
-						std::string message = ERR_ERRONEUSNICKNAME(buff_rr_str);
+						std::string message = ERR_ERRONEUSNICKNAME(buff_rr_str) + "\n";
 						send(fd_newClient, message.c_str(), message.size(), 0);
 						std::cout << RED "Error: ERR_ERRONEUSNICKNAME " << "[" << newClient->GetIp() << "] ["
 							<< newClient->GetFd() << "]" RESET << std::endl;
