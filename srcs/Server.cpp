@@ -220,6 +220,11 @@ void Server::ClearClients(int fd)
 			(*it)->delUser(client);
 			if ((*it)->getOperators().count(client->GetFd()) != 0)
 				(*it)->delOperator(client);
+			if ((*it)->getUserCount() == 0)
+			{
+				deleteChannel((*it)->getName());
+				delete (*it);
+			}
 		}
 	}
 	catch (std::exception& e)

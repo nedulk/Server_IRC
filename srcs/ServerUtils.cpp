@@ -368,7 +368,6 @@ void Server::deleteChannel(std::string &channelName)
 	_channelList.erase(channelName);
 }
 
-
 void Server::createChannel(Client *oper, std::string &channelName, std::string key)
 {
 	try
@@ -385,13 +384,13 @@ void Server::createChannel(Client *oper, std::string &channelName, std::string k
 		newChannel->addOperator(oper);
 		newChannel->addUser(oper);
 		_channelList[channelName] = newChannel;
+		oper->joinedChannel(newChannel);
 		std::cout << "Channel " + channelName + " successfully created" << std::endl;
 		std::cout << "User " + oper->GetNick() + " successfully joined" << std::endl;
 		newChannel->broadcastMsg(":" + oper->GetNick() + "!" + oper->GetUsername() + "@" +
 			Command::getHostname() + " JOIN " + channelName + " * :" + oper->GetRealname() + "\r\n",
 			*oper, true);
 		newChannel->broadcastUserList(*oper);
-		oper->joinedChannel(newChannel);
 	}
 	catch (std::exception& e)
 	{
