@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 17:00:38 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 10:42:19 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,9 +152,8 @@ void Server::ReceiveNewData(int fd)
 		std::cout << BRED " disconnected ×" RESET << std::endl;
 		ClearClients(fd);
 		close(fd);
-		throw (std::runtime_error("Bot disconnected"));
 	}
-	if (bytes <= 0 && getClientByFd(fd)->getBot() == false) // le client est deco
+	else if (bytes <= 0 && getClientByFd(fd)->getBot() == false) // le client est deco
 	{
 		std::cout << ITALIC "Client [" << getClientByFd(fd)->GetIp() << "]" << " [" << fd << "]" RESET;
 		std::cout << BRED " disconnected ×" RESET << std::endl;
@@ -197,7 +196,7 @@ void Server::ReceiveNewData(int fd)
 				Command::execCmd(*this, *getClientByFd(fd), regex, Command::GetCmdArgs(command.c_str()));
 			else
 			{
-				std::string errMsg = ERR_UNKNOWNCOMMAND(command);
+				std::string errMsg = ERR_UNKNOWNCOMMAND(command) + "\n";
 				send(fd, errMsg.c_str(), errMsg.size(), 0);
 				std::cout << RED "Error: ERR_UNKNOWNCOMMAND " << "[" << getClientByFd(fd)->GetIp() << "] ["
 					<< fd << "]" RESET << std::endl;

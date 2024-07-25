@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 17:25:32 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 10:17:46 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,9 +309,9 @@ void Server::UserCheck(int fd_newClient, Client *newClient)
 					regfree(&regex);
 					break ;
 				}
+    			regfree(&regex);
 			}
 		}
-    	regfree(&regex);
     }	
 }
 
