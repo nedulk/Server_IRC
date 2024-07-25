@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/25 11:22:02 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/25 16:08:50 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,46 +208,53 @@ void Server::ReceiveNewData(int fd)
 
 void Server::ClearClients(int fd)
 {
-	// Supression d'un client dans la liste. Ex: deconnexion
-	try
-	{
-		Client	*client = getClientByFd(fd);
-		std::vector<Channel *> joinedChannels = client->getJoinedChannels();
+    // Supression d'un client dans la liste. Ex: deconnexion
+    try
+    {
+        Client	*client = getClientByFd(fd);
+        std::vector<Channel *> joinedChannels = client->getJoinedChannels();
 
-		for (std::vector<Channel*>::iterator it = joinedChannels.begin(); it != joinedChannels.end(); ++it)
-		{
-			std::cout << "joinedChannel : " << (*it)->getName() << std::endl;
-			(*it)->delUser(client);
-			if ((*it)->getOperators().count(client->GetFd()) != 0)
-				(*it)->delOperator(client);
-			if ((*it)->getUserCount() == 0)
-			{
-				deleteChannel((*it)->getName());
-				delete (*it);
-			}
-		}
-	}
-	catch (std::exception& e)
-	{
-		std::cerr << "Unexpected problem: " << e.what() << std::endl;
-	}
-	for (std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); ++it) // pre-incrementation par convention
-	{																		  			   // ++it incremente la valeur et retourne 			
-		if ((*it)->GetFd() == fd)														   // la valeur incrementee
-		{
-			_Clients.erase(it);
-			delete *it;
-			break ;
-		}
-	}
-	for (std::vector<struct pollfd>::iterator it = fds.begin(); it != fds.end(); ++it)
-	{
-		if (it->fd == fd)
-		{
-			fds.erase(it);
-			break ;
-		}
-	}
+        for (std::vector<Channel*>::iterator it = joinedChannels.begin(); it != joinedChannels.end(); )
+        {
+            std::cout << "joinedChannel : " << (*it)->getName() << std::endl;
+            (*it)->delUser(client);
+            if ((*it)->getOperators().count(client->GetFd()) != 0)
+                (*it)->delOperator(client);
+            if ((*it)->getUserCount() == 0)
+            {
+                deleteChannel((*it)->getName());
+                delete (*it);
+                it = joinedChannels.erase(it);
+            }
+            else
+                ++it;
+        }
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Unexpected problem: " << e.what() << std::endl;
+    }
+
+    std::vector<Client*>::iterator it = _Clients.begin();
+    while (it != _Clients.end())
+    {
+        if ((*it)->GetFd() == fd)
+        {
+            delete *it;
+            it = _Clients.erase(it);
+        }
+        else
+            ++it;
+    }
+
+    std::vector<struct pollfd>::iterator it_fd = fds.begin();
+    while (it_fd != fds.end())
+    {
+        if (it_fd->fd == fd)
+            it_fd = fds.erase(it_fd);
+        else
+            ++it_fd;
+    }
 }
 
 void Server::ClearAllClients()
