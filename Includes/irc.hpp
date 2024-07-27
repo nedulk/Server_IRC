@@ -104,7 +104,7 @@
 # define RPL_TOPIC(input, chan, topic)				"332 " + input + " " + chan + " " + topic
 # define RPL_INVITING(input, nick, chan)			"341 " + input + " " + nick + " " + chan
 # define RPL_WHOREPLY(input, chan, user)			"352 " + input + " " + chan + " " + user
-// missing whoreply end
+# define RPL_ENDOFWHO(input, chan)					"315 " + input + " " + chan + ":End of /WHO list."
 # define RPL_NAMREPLY(input, chan, nicks)			"353 " + input + " = " + chan + " :" + nicks
 # define RPL_ENDOFNAMES(input, chan)				("366 " + input + " " + chan + " :End of /NAMES list")
 
@@ -113,15 +113,14 @@
 # define USER "^[a-zA-Z][a-zA-Z0-9_.-]{0,8} 0 \\* :[a-zA-Z]{1,9}$"
 # define PRIVMSG "^PRIVMSG ([a-zA-Z][a-zA-Z0-9_.-]{0,8}(,[a-zA-Z][a-zA-Z0-9_.-]{0,8})*) :.{0,450}$"
 # define PRIVMSG2 "^PRIVMSG ((([a-zA-Z][a-zA-Z0-9_.-]{0,8})+ )+|(#[^' :\x07\x0D\x0A]+ )+)+:.{0,450}$"
-# define JOIN "^JOIN [^':\x07\x0D\x0A]+$"
-# define MODE "^MODE [^'\x07\x0D\x0A]+$"
-# define TOPIC "^TOPIC [^'\x07\x0D\x0A]+$"
-# define INVITE "^INVITE [^'\x07\x0D\x0A]+$"
-# define KICK "^KICK [^'\x07\x0D\x0A]+$"
+# define JOIN "^JOIN [^\x07\x0D\x0A]{0,450}$"
+# define MODE "^MODE [^\x07\x0D\x0A]{0,450}$"
+# define TOPIC "^TOPIC [^\x07\x0D\x0A]{0,450}$"
+# define INVITE "^INVITE [^\x07\x0D\x0A]{0,450}$"
+# define KICK "^KICK [^\x07\x0D\x0A]{0,450}$"
 # define QUIT "^QUIT :[a-zA-Z0-9 ]{0,50}$"
-# define PART "^PART [^'\x07\x0D\x0A]+$"
-# define WHO "^WHO [^'\x07\x0D\x0A]+$"
-	//refaire PART pour detection channels
+# define PART "^PART [^\x07\x0D\x0A]{0,450}$"
+# define WHO "^WHO [^\x07\x0D\x0A]{0,450}$"
 
 # include "Server.hpp"
 # include "Client.hpp"
