@@ -91,13 +91,8 @@ void Command::privMsg(Server& server, Client& client, std::vector<std::string> a
 					Client* receiverClient = server.getClientByName(*it, 1);
 					if (receiverClient == NULL)
 					{
-<<<<<<< HEAD
 						std::string err_nick = ERR_NOSUCHNICK(client.GetNick(), *it) + "\r\n";
 						send(client.GetFd(), err_nick.c_str(), err_nick.size(), 0);
-=======
-						std::string err_nick = ERR_NOSUCHNICK(client.GetNick(), *it) + "\n";
-						send(client.GetFd(), err_nick.c_str(), (ERR_NOSUCHNICK(client.GetNick(), *it)).size(), 0);
->>>>>>> refs/remotes/origin/main
 						std::cout << RED "Error: ERR_NOSUCHNICK " << "[" << client.GetIp() << "] ["
 							<< client.GetFd() << "]" RESET << std::endl;
 						throw(std::runtime_error (""));
