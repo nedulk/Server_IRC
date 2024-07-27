@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 14:33:08 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 15:08:23 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,9 @@ bool Server::_Signal = false;
 void Server::SignalHandler(int signum)
 {
 	(void)signum;
-	Server::_Signal = true; // stop serv
+	Server::_Signal = true;
 }
 
-// -1 permet d'indiquer que le socket n'est pas encore initialise/pas encore ouvert.
 Server::Server(int port, std::string password, std::string passwordBot): _Password(password), _PasswordBot(passwordBot), _Port(port), _ServerSocketFd(-1)
 {
 }
@@ -42,21 +41,15 @@ void Server::ServerInit()
 	
 	while (Server::_Signal == false)
 	{
-		if((poll(&fds[0],fds.size(),-1) == -1) && Server::_Signal == false) //permet d'attendre un event
+		if((poll(&fds[0],fds.size(),-1) == -1) && Server::_Signal == false)
 			throw(std::runtime_error("Poll() failed"));
 		for (size_t i = 0; i < fds.size(); i++)
 		{
 			if (fds[i].revents & POLLIN)
 			{
 				if (fds[i].fd == this->_ServerSocketFd)
-				{
-					// -> le serveur a un socket d'ecoute et attend une requete sur port specifique (ici 6667)
-					// -> le serveur recoit une demande sur ce socket d'ecoute
-					// -> le serveur accepte la connexion
-					// -> le serveur cree un socket unique pour la communication 
-					NewClient(); // on va accepter le nouveau client et cree un socket de communication entre le serveur et ce client specifique
+					NewClient();
 					
-				}
 				else		
 					ReceiveNewData(fds[i].fd);
 			}
@@ -78,8 +71,8 @@ void Server::ServerSocket()
 	add.sin_addr.s_addr = INADDR_ANY;
 
 	this->_ServerSocketFd = socket(AF_INET,SOCK_STREAM, 0); // (1) dommaine de communication / famille du socket (IPv4, IPv6)
-													  // (2) type de communication, ici communication bidirectionnelle en flux d'octets.
-													  // (3) protocol a utiliser avec le socket, la pluspart du temps set a 0.
+													  		// (2) type de communication, ici communication bidirectionnelle en flux d'octets.
+													  		// (3) protocol a utiliser avec le socket, la pluspart du temps set a 0.
 	if (this->_ServerSocketFd == -1)
 		throw (std::runtime_error(RED "Failed to create server socket" RESET));
 	
