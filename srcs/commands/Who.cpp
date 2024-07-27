@@ -44,6 +44,9 @@ static void	printUserList(Server& server, Client& client, std::string& channelNa
 			msg += "xz :0 " + it->second->GetRealname() + "\r\n";
 			send(client.GetFd(), msg.c_str(), msg.size(), 0);
 		}
+		msg = ":ircserv ";
+		msg += RPL_ENDOFWHO(client.GetNick(), channelName) + "\r\n";
+		send(client.GetFd(), msg.c_str(), msg.size(), 0);
 	}
 	catch (std::exception& e)
 	{
@@ -57,12 +60,7 @@ void Command::whoCmd(Server &server, Client &client, std::vector<std::string> ar
 
 	args.erase(args.begin());
 	if (args.empty())
-	{
-		// every user who doesnt have a common channel with client
-		// search by channels
 		return ;
-	}
-	//print all users
 	getChannels(args.front(), channels);
 	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); ++it)
 	{

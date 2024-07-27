@@ -65,7 +65,7 @@ void Server::NickCheck(int fd_newClient, Client* newClient, const std::string& m
 			} 
 			else 
 			{
-				std::string error_message = ERR_ERRONEUSNICKNAME(nick) + "\n";
+				std::string error_message = ERR_ERRONEUSNICKNAME(nick) + "\r\n";
 				send(fd_newClient, error_message.c_str(), error_message.size(), 0);
 				std::cout << RED "Error: ERR_ERRONEUSNICKNAME " << "[" << newClient->GetIp() << "] ["
 					<< newClient->GetFd() << "]" RESET << std::endl;
@@ -75,7 +75,7 @@ void Server::NickCheck(int fd_newClient, Client* newClient, const std::string& m
 	} 
 	else 
 	{
-		std::string error_message = ERR_NICKNAMEINUSE(nick) + "\n";
+		std::string error_message = ERR_NICKNAMEINUSE(nick) + "\r\n";
 		send(fd_newClient, error_message.c_str(), error_message.size(), 0);
 		std::cout << RED "Error: ERR_NICKNAMEINUSE " << "[" << newClient->GetIp() << "] ["
 			<< newClient->GetFd() << "]" RESET << std::endl;
