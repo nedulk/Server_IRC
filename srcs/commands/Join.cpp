@@ -61,18 +61,12 @@ void Command::joinCmd(Server& server, Client& sender, std::vector<std::string> &
 	channels = getJoinChannels(args.front());
 	if (channels.empty())
 	{
-		std::cout << "channel name error" << std::endl;
+		sender.sendErrorMsg(":ircserv " + (ERR_NEEDMOREPARAMS(sender.GetNick(), "JOIN")) + "\r\n");
 		return ;
-	}
-	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); ++it) {
-		std::cout << "channel : '" << *it << "'" << std::endl;
 	}
 	args.erase(args.begin());
 	if (!args.empty())
 		keys = getJoinKeys(args.front());
-	for (std::vector<std::string>::iterator it = keys.begin(); it != keys.end(); ++it) {
-		std::cout << "keys : '" << *it << "'" << std::endl;
-	}
 	for (std::vector<std::string>::iterator it = channels.begin(); it != channels.end(); it++)
 	{
 		if (keys.empty())

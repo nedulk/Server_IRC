@@ -15,7 +15,6 @@ static int	getFlags(std::vector<std::pair<int, std::string> >& flags, std::strin
 	char		lastMod = '+';
 	int 		neededArgs = 0;
 
-	neededArgs = 0;
 	for (std::string::iterator it = arg.begin(); it != arg.end(); ++it)
 	{
 		while (it != arg.end() && (*it == '+' || *it == '-'))

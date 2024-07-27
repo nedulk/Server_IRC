@@ -247,5 +247,6 @@ void Server::createChannel(Client *oper, std::string &channelName, std::string k
 	catch (std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
+		oper->sendErrorMsg(":ircserv 403 " + oper->GetNick() + " " + channelName + " :No such channel\r\n");
 	}
 }

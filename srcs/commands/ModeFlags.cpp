@@ -50,8 +50,6 @@ void	Command::keyFlag(bool input, Channel *channel, Client& client, std::string 
 			client.sendErrorMsg(":ircserv " + (ERR_NEEDMOREPARAMS(client.GetNick(), "MODE -k")) + "\r\n");
 		return ;
 	}
-	std::cout << channel->getKey() << std::endl;
-	std::cout << channel->getIsChannelKey() << std::endl;
 	if (input != channel->getIsChannelKey()
 	&& ((channel->getIsChannelKey() && key == channel->getKey())
 	|| !channel->getIsChannelKey()))
