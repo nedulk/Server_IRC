@@ -196,7 +196,8 @@ void Server::ReceiveNewData(int fd)
 					Command::execCmd(*this, *getClientByFd(fd), regex, Command::GetCmdArgs(command.c_str()));
 				else
 				{
-					std::string errMsg = ERR_UNKNOWNCOMMAND(command) + "\n";
+					std::string errMsg = ":ircserv ";
+					errMsg += ERR_UNKNOWNCOMMAND(command) + "\r\n";
 					send(fd, errMsg.c_str(), errMsg.size(), 0);
 					std::cout << RED "Error: ERR_UNKNOWNCOMMAND " << "[" << getClientByFd(fd)->GetIp() << "] ["
 						<< fd << "]" RESET << std::endl;
@@ -208,7 +209,7 @@ void Server::ReceiveNewData(int fd)
 
 void Server::ClearClients(int fd)
 {
-    // Supression d'un client dans la liste. Ex: deconnexion
+    // Suppression d'un client dans la liste. Ex: deconnexion
     try
     {
         Client	*client = getClientByFd(fd);
