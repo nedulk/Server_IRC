@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 10:26:31 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 16:17:23 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,9 @@
 # define QUIT "^QUIT :[a-zA-Z0-9 ]{0,50}$"
 # define PART "^PART [^\x07\x0D\x0A]{0,450}$"
 # define WHO "^WHO [^\x07\x0D\x0A]{0,450}$"
+# define PASS "^PASS [^\x07\x0D\x0A]{0,450}$"
+# define NICKCMD "^NICK [a-zA-Z][a-zA-Z0-9_.-]{0,8}$"
+# define USERCMD "^USER [^\x07\x0D\x0A]{0,450}$" 
 
 # include "Server.hpp"
 # include "Client.hpp"

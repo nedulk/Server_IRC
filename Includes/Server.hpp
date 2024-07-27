@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 14:58:46 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 16:38:32 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Server
 		void 		FirstCoHandler(int fd_newClient, Client *newClient);
 		
 		int		NickCheck_oc(const std::string& buff_rr);
-		void	NickCheck(int fd_newClient, Client* newClient, const std::string& message);
+		void	NickCheck(int fd_newClient, Client* newClient, const std::string& message, int mode);
 		void	UserCheck(int fd_newClient, Client* newClient, const std::string& message) ;
 		void	PasswordCheck(int fd_newClient, const std::string& message);
 		

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 10:18:01 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 16:31:28 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void Server::PasswordCheck(int fd_newClient, const std::string& message)
 	}
 }
 
-void Server::NickCheck(int fd_newClient, Client* newClient, const std::string& message)
+void Server::NickCheck(int fd_newClient, Client* newClient, const std::string& message, int mode)
 {
 	std::string nick = message.substr(5);
 	nick.erase(std::remove(nick.begin(), nick.end(), ' '), nick.end());
@@ -61,7 +61,8 @@ void Server::NickCheck(int fd_newClient, Client* newClient, const std::string& m
 			if ((!ret && !newClient->getBot() && nick != "Bot") || (!ret && newClient->getBot() && nick == "Bot"))
 			{
 				newClient->SetNick(nick);
-				getClientByFd(fd_newClient)->setNickCheck(1);
+				if (mode == 0)
+					getClientByFd(fd_newClient)->setNickCheck(1);
 			} 
 			else 
 			{
@@ -131,7 +132,7 @@ void Server::handle_message(int fd_newClient, Client* newClient)
 		} 
 		else if (message.find("NICK ") == 0 && getClientByFd(fd_newClient)->getNickCheck() == 0)
 		{
-			NickCheck(fd_newClient, newClient, message);
+			NickCheck(fd_newClient, newClient, message, 0);
 			if (getClientByFd(fd_newClient)->getNickCheck() == 1)
 			{	
 				std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;

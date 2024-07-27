@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 15:08:23 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 16:42:05 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,16 +275,8 @@ void Server::ClearAllChannels()
 
 void Server::CloseFds()
 {
-	std::cout <<  YELLOW "Disconnecting all clients ..." RESET << std::endl;
-	for (size_t i = 0; i < _Clients.size() ; i++)
-	{
-		close(_Clients[i]->GetFd());
-	}
-	if (this->_ServerSocketFd != -1)
-	{
-		std::cout << YELLOW "Terminating server: Closing the listening socket..." RESET << std::endl;
-		close(this->_ServerSocketFd);
-	}
+	for (int i = 3; i < 1024 ; i++)
+		close(i);
 }
 
 std::string getCurrentTime()
