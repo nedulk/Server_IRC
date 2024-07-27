@@ -91,7 +91,8 @@ void Command::privMsg(Server& server, Client& client, std::vector<std::string> a
 					Client* receiverClient = server.getClientByName(*it, 1);
 					if (receiverClient == NULL)
 					{
-						std::string err_nick = ERR_NOSUCHNICK(client.GetNick(), *it) + "\r\n";
+						std::string err_nick = ":ircserv ";
+						err_nick += ERR_NOSUCHNICK(client.GetNick(), *it) + "\r\n";
 						send(client.GetFd(), err_nick.c_str(), err_nick.size(), 0);
 						std::cout << RED "Error: ERR_NOSUCHNICK " << "[" << client.GetIp() << "] ["
 							<< client.GetFd() << "]" RESET << std::endl;

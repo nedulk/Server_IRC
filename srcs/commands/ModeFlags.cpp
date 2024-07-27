@@ -87,6 +87,12 @@ void	Command::operatorFlag(bool input, Server& server, Channel *channel, Client&
 		client.sendErrorMsg(":ircserv " + (ERR_NOSUCHNICK(client.GetNick(), userName) + "\r\n"));
 		return ;
 	}
+	if (channel->getUserList().count(client.GetFd()) == 0)
+	{
+		client.sendErrorMsg(":ircserv "
+			+ (ERR_USERNOTINCHANNEL(client.GetNick(), userName, channel->getName())) + "\r\n");
+		return ;
+	}
 	if ((input == true && channel->getOperators().count(user->GetFd()) != 0)
 	|| (input == false && channel->getOperators().count(user->GetFd() == 0)))
 		return ;
