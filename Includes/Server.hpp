@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/25 11:22:25 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/26 11:56:34 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Server
 		std::vector<Client*> _Clients; // Ici on va stocker la liste des Clients qui sont connectes sur le serveur.
 		std::map<std::string, Channel*>	_channelList;
 
+		std::queue<std::string> message_queue;
 		Client *Cli;
 		static bool _Signal;
 	public:
@@ -47,14 +48,15 @@ class Server
 		static void SignalHandler(int signum); // La static permet d'acceder a la variable static _Signal sans instancier 
 											    // un objet Server.
 		void FirstCoHandler(int fd_newClient, Client *newClient);
-		void PasswordCheck(int fd_newClient);
-		std::vector<std::string> remain_line;
-		void splitAndKeepLastTwo(const std::string& str);
-		std::string compare_remain_line(std::string str);
 		
-		int NickCheck_oc(std::string buff_rr);
-		void NickCheck(int fd_newClient, Client *newClient);
-		void UserCheck(int fd_new_client, Client *newClient);
+		int NickCheck_oc(const std::string& buff_rr);
+		void NickCheck(int fd_newClient, Client* newClient, const std::string& message);
+		void UserCheck(int fd_newClient, Client* newClient, const std::string& message) ;
+		void PasswordCheck(int fd_newClient, const std::string& message);
+		
+		bool all_check_ok(int fd_newClient);
+		void receive_message(int fd_newClient, Client* newClient);
+		void handle_message(int fd_newClient, Client* newClient);
 		
 		void CloseFds();
 		void ClearClients(int fd);

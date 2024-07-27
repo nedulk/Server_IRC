@@ -6,40 +6,13 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/25 12:07:25 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 10:18:01 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-void Server::splitAndKeepLastTwo(const std::string& str)
-{
-	char* cstr = new char[str.length() + 1];
-	std::strcpy(cstr, str.c_str());
-
-	char* token = std::strtok(cstr, "\n\r");
-	while (token != NULL)
-	{
-		std::string tokenStr = token;
-		tokenStr.erase(std::remove(tokenStr.begin(), tokenStr.end(), '\n'), tokenStr.end());
-		tokenStr.erase(std::remove(tokenStr.begin(), tokenStr.end(), '\r'), tokenStr.end());
-		remain_line.push_back(tokenStr);
-		token = std::strtok(NULL, "\n\r");
-	}
-	delete[] cstr;
-}
-
-std::string Server::compare_remain_line(std::string str)
-{
-	for (std::vector<std::string>::iterator it = remain_line.begin(); it != remain_line.end(); ++it)
-	{
-		if (std::strncmp(str.c_str(), it->c_str(), 5) == 0)
-			return (*it);
-	}
-	return ("");
-}
-
-int	Server::NickCheck_oc(std::string buff_rr)
+int Server::NickCheck_oc(const std::string& buff_rr)
 {
 	if (!_Clients.empty())
 	{
@@ -51,313 +24,192 @@ int	Server::NickCheck_oc(std::string buff_rr)
 	}
 	return (0);
 }
-
-void Server::PasswordCheck(int fd_newClient)
+void Server::PasswordCheck(int fd_newClient, const std::string& message)
 {
-	char buff_r[1024];
-	for (int i = 0; i < 1024; i++)
-		buff_r[i] = '\0';
+	std::string pass = message.substr(5);
+	pass.erase(std::remove(pass.begin(), pass.end(), ' '), pass.end());
 	
-	while (1)
+	if (pass == _PasswordBot) 
 	{
-		if (Server::_Signal == true)
-		{
-			ClearAllChannels();
-			ClearAllClients();
-			CloseFds();
-			exit(0);
-		}
-		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
-		if (bytes <= 0)
-		{
-			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
-			std::cout << BRED " disconnected ×" RESET << std::endl;
-			ClearClients(fd_newClient);
-			close(fd_newClient);
-			throw (std::runtime_error("Client disconnected"));
-		}
-		if (std::strncmp(buff_r, "PASS ", 5) == 0)
-		{
-			splitAndKeepLastTwo(buff_r);
-			char *buff_rr = buff_r + 5;
-			while (*buff_rr == ' ')
-				buff_rr++;
-			char *p = buff_rr;
-			while (*p != '\0')
-			{
-				if (*p == '\n' || *p == '\r')
-				{
-					*p = '\0';
-					break;
-				}
-				p++;
-			}
-			if(std::strcmp(buff_rr, this->_PasswordBot.c_str()) == 0)
-			{	
-				getClientByFd(fd_newClient)->setBot();
-				for (int i = 0; i < 1024; i++)
-					buff_r[i] = '\0';
-				break;
-			}
-			if(std::strcmp(buff_rr, this->_Password.c_str()) == 0)
-			{	
-				for (int i = 0; i < 1024; i++)
-					buff_r[i] = '\0';
-				break;
-			}
-			else 
-			{
-				std::string buff_rr_str(buff_rr);
-				std::string message = ERR_PASSWDMISMATCH;
-				send(fd_newClient, message.c_str(), message.size(), 0);
-				std::cout << RED "Error: ERR_PASSWDMISMATCH [" << fd_newClient << "]" RESET << std::endl;
-				for (int i = 0; i < 1024; i++)
-					buff_r[i] = '\0';
-			}
-		}
-	}	
+		getClientByFd(fd_newClient)->setBot();
+		getClientByFd(fd_newClient)->setPassCheck(1);
+	} 
+	else if (pass == _Password) 
+	{
+		getClientByFd(fd_newClient)->setPassCheck(1);
+	} 
+	else
+	{
+		std::string error_message = ERR_PASSWDMISMATCH;
+		send(fd_newClient, error_message.c_str(), error_message.size(), 0);
+		std::cout << RED "Error: ERR_PASSWDMISMATCH [" << fd_newClient << "]" RESET << std::endl;
+	}
 }
 
-void Server::NickCheck(int fd_newClient, Client *newClient)
+void Server::NickCheck(int fd_newClient, Client* newClient, const std::string& message)
 {
-	char buff_r[1024];
-	for (int i = 0; i < 1024; i++)
-		buff_r[i] = '\0';
-	
-	regex_t regex;
-	while (1)
+	std::string nick = message.substr(5);
+	nick.erase(std::remove(nick.begin(), nick.end(), ' '), nick.end());
+
+	if (NickCheck_oc(nick) == 0) 
 	{
-		if (Server::_Signal == true)
+		regex_t regex;
+		int ret = regcomp(&regex, NICK , REG_EXTENDED);
+		if (!ret)
 		{
-			ClearAllChannels();
-			ClearAllClients();
-			CloseFds();
-			exit(0);
-		}
-		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
-		if (bytes <= 0 && newClient->getBot() == false)
-		{
-			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
-			std::cout << BRED " disconnected ×" RESET << std::endl;
-			ClearClients(fd_newClient);
-			close(fd_newClient);
-			throw (std::runtime_error("Client disconnected"));
-		}
-		else if (bytes <= 0 && newClient->getBot() == true)
-		{
-			std::cout << ITALIC "Bot [" << fd_newClient << "]" RESET;
-			std::cout << BRED " disconnected ×" RESET << std::endl;
-			ClearClients(fd_newClient);
-			close(fd_newClient);
-			throw (std::runtime_error("Bot disconnected"));
-		}
-		if (std::strncmp(buff_r, "NICK ", 5) == 0 || !compare_remain_line("NICK ").empty())
-		{
-			char *buff_rr;
-			std::string result = compare_remain_line("NICK ");
-			if (!result.empty())
-				buff_rr = const_cast<char*>(result.c_str()) + 5;
-			else
-				buff_rr = buff_r + 5;
-			if (compare_remain_line("USER ").empty())
-				splitAndKeepLastTwo(buff_r);
-			while (*buff_rr == ' ')
-				buff_rr++;
-			char *p = buff_rr;
-			while (*p != '\0')
+			ret = regexec(&regex, nick.c_str(), 0, NULL, 0);
+			if ((!ret && !newClient->getBot() && nick != "Bot") || (!ret && newClient->getBot() && nick == "Bot"))
 			{
-				if (*p == '\n' || *p == '\r')
+				newClient->SetNick(nick);
+				getClientByFd(fd_newClient)->setNickCheck(1);
+			} 
+			else 
+			{
+				std::string error_message = ERR_ERRONEUSNICKNAME(nick) + "\n";
+				send(fd_newClient, error_message.c_str(), error_message.size(), 0);
+				std::cout << RED "Error: ERR_ERRONEUSNICKNAME " << "[" << newClient->GetIp() << "] ["
+					<< newClient->GetFd() << "]" RESET << std::endl;
+			}
+		}
+		regfree(&regex);
+	} 
+	else 
+	{
+		std::string error_message = ERR_NICKNAMEINUSE(nick) + "\n";
+		send(fd_newClient, error_message.c_str(), error_message.size(), 0);
+		std::cout << RED "Error: ERR_NICKNAMEINUSE " << "[" << newClient->GetIp() << "] ["
+			<< newClient->GetFd() << "]" RESET << std::endl;
+	}
+}
+
+ void Server::UserCheck(int fd_newClient, Client* newClient, const std::string& message) 
+ {
+	std::string messageReg = message.substr(5);
+	std::istringstream iss(message.substr(5));
+	std::string username, realname, temp;
+
+	regex_t regex;
+	int ret = regcomp(&regex, USER, REG_EXTENDED);
+	if (!ret)
+	{
+		ret = regexec(&regex, messageReg.c_str(), 0, NULL, 0);
+		if (!ret) 
+		{
+			std::getline(iss, username, ' ');
+
+			while (std::getline(iss, temp, ':'))
+			{
+				if (!temp.empty())
 				{
-					*p = '\0';
-					break;
+					realname = temp;
+					break ;
 				}
-				p++;
 			}
-			if (NickCheck_oc(buff_rr) == 0)
-			{	
-				int ret;
-				ret = regcomp(&regex, NICK, REG_EXTENDED);
-				if (!ret)
-				{	
-					ret = regexec(&regex, buff_rr, 0, NULL, 0);
-					if ((!ret && newClient->getBot() == false && strcmp(buff_rr, "Bot") != 0)
-						|| (!ret && newClient->getBot() == true && strcmp(buff_rr, "Bot") == 0))
-					{
-						newClient->SetNick(buff_rr);
-						break ;
-					}
-					else
-					{
-						std::string buff_rr_str(buff_rr);
-						std::string message = ERR_ERRONEUSNICKNAME(buff_rr_str) + "\n";
-						send(fd_newClient, message.c_str(), message.size(), 0);
-						std::cout << RED "Error: ERR_ERRONEUSNICKNAME " << "[" << newClient->GetIp() << "] ["
-							<< newClient->GetFd() << "]" RESET << std::endl;
-						for (int i = 0; i < 1024; i++)
-							buff_r[i] = '\0';
-						for (std::vector<std::string>::iterator it = remain_line.begin(); it != remain_line.end(); ++it)
-							*it = "";
-					}
-				}
-				regfree(&regex); 
-			}
-			else
-			{
-				std::string buff_rr_str(buff_rr);
-				std::string message = ERR_NICKNAMEINUSE(buff_rr_str) + "\n";
-				send(fd_newClient, message.c_str(), message.size(), 0);
-				std::cout << RED "Error: ERR_NICKNAMEINUSE " << "[" << newClient->GetIp() << "] ["
-						<< newClient->GetFd() << "]" RESET << std::endl;
-				for (int i = 0; i < 1024; i++)
-					buff_r[i] = '\0';
-				for (std::vector<std::string>::iterator it = remain_line.begin(); it != remain_line.end(); ++it)
-					*it = "";
-			}
+			newClient->SetUsername(username);
+            newClient->SetRealname(realname);
+			getClientByFd(fd_newClient)->setUserCheck(1);
 		}
 	}
 	regfree(&regex);
 }
 
-void Server::UserCheck(int fd_newClient, Client *newClient)
+void Server::handle_message(int fd_newClient, Client* newClient) 
 {
-    char buff_r[1024];
-    for (int i = 0; i < 1024; i++)
-        buff_r[i] = '\0';
-    
-    regex_t regex;
-    while (1)
-    {
-        if (Server::_Signal == true)
+	while (!message_queue.empty())
+	{
+		std::string message = message_queue.front();
+		message_queue.pop();
+
+		if (message.find("PASS ") == 0 && getClientByFd(fd_newClient)->getPassCheck() == 0)
 		{
-			ClearAllChannels();
-			ClearAllClients();
-			CloseFds();
-			exit(0);
+			PasswordCheck(fd_newClient, message);
+			if (getClientByFd(fd_newClient)->getPassCheck() == 1)
+			{	
+				std::cout << "PASS cmd [OK] [" << fd_newClient << "]" << std::endl;
+				getClientByFd(fd_newClient)->setPassCheck(2);
+			}
+		} 
+		else if (message.find("NICK ") == 0 && getClientByFd(fd_newClient)->getNickCheck() == 0)
+		{
+			NickCheck(fd_newClient, newClient, message);
+			if (getClientByFd(fd_newClient)->getNickCheck() == 1)
+			{	
+				std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;
+				getClientByFd(fd_newClient)->setNickCheck(2);
+			}	
+		} 
+		else if (message.find("USER ") == 0 && getClientByFd(fd_newClient)->getUserCheck() == 0) 
+		{
+			UserCheck(fd_newClient, newClient, message);
+			if (getClientByFd(fd_newClient)->getUserCheck() == 1)
+			{
+				std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;
+				getClientByFd(fd_newClient)->setUserCheck(2);
+			}
 		}
-		size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
-		if (bytes <= 0 && newClient->getBot() == false)
-		{
-			std::cout << ITALIC "Client [" << fd_newClient << "]" RESET;
+	}
+}
+	
+void Server::receive_message(int fd_newClient, Client* newClient)
+{
+	char buff_r[1024];
+	std::memset(buff_r, 0, sizeof(buff_r));
+
+	size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
+	if (bytes <= 0)
+	{
+		std::cout << ITALIC "Client [" << getClientByFd(fd_newClient)->GetIp() << "]" << " [" << fd_newClient << "]" RESET;
 			std::cout << BRED " disconnected ×" RESET << std::endl;
-			ClearClients(fd_newClient);
-			close(fd_newClient);
-			throw (std::runtime_error("Client disconnected"));
-		}
-		else if (bytes <= 0 && newClient->getBot() == true)
-		{
-			std::cout << ITALIC "Bot [" << fd_newClient << "]" RESET;
-			std::cout << BRED " disconnected ×" RESET << std::endl;
-			ClearClients(fd_newClient);
-			close(fd_newClient);
-			throw (std::runtime_error("Bot disconnected"));
-		}
-		if (std::strncmp(buff_r, "USER ", 5) == 0 || !compare_remain_line("USER ").empty())
-        {
-			char *buff_rr;
-			std::string result = compare_remain_line("USER ");
-			if (!result.empty())
-				buff_rr = const_cast<char*>(result.c_str()) + 5;
-			else
-				buff_rr = buff_r + 5;
-			while (*buff_rr == ' ')
-				buff_rr++;
-			char *p = buff_rr;
-			while (*p != '\0')
-			{
-				if (*p == '\n' || *p == '\r')
-				{
-					*p = '\0';
-					break;
-				}
-				p++;
-			}
-			int ret;
-			ret = regcomp(&regex, USER, REG_EXTENDED);
-			if (ret < 0)
-			{
-				regfree(&regex);
-				return ;
-			}
-			if (!ret)
-			{
-				ret = regexec(&regex, buff_rr, 0, NULL, 0);
-				if (!ret)
-				{
-					char *buff_rrr = buff_rr;
-					std::string result;
-					while (*buff_rrr != '0')
-					{
-						if (*buff_rrr != ' ')
-						{
-							result += *buff_rrr;
-						}
-						buff_rrr++;
-					}
-					newClient->SetUsername(result);
-					while(*buff_rrr != ':')
-						buff_rrr++;
-					buff_rrr++;
-					char *p = buff_rrr;
-					while (*p != '\0')
-					{
-						if (*p == '\n' || *p == '\r')
-						{
-							*p = '\0';
-							break;
-						}
-						p++;
-					}
-					newClient->SetRealname(buff_rrr);
-					for (std::vector<std::string>::iterator it = remain_line.begin(); it != remain_line.end(); ++it)
-						*it = "";
-					regfree(&regex);
-					break ;
-				}
-    			regfree(&regex);
-			}
-		}
-    }	
+		close(fd_newClient);
+		return;
+	}
+
+	std::string message(buff_r);
+	Client::splitAndKeepLastTwo(message);
+
+	for (std::vector<std::string>::iterator it = Client::remain_line.begin(); it != Client::remain_line.end(); ++it)
+	{
+		message_queue.push(*it);
+	}
+
+	handle_message(fd_newClient, newClient);
+
+	Client::remain_line.clear();
 }
 
-void Server::FirstCoHandler(int fd_newClient, Client *newClient)
+void Server::FirstCoHandler(int fd_newClient, Client* newClient)
 {
-	try
-	{
-		//PASS
-		PasswordCheck(fd_newClient);
-		std::cout << "PASS cmd [OK] [" << fd_newClient << "]" << std::endl;
-	
-		//NICK
-		NickCheck(fd_newClient, newClient) ;
-		std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;
+	receive_message(fd_newClient, newClient);
 
-		//USER
-		UserCheck(fd_newClient, newClient);
-		std::cout << "USER cmd [OK] [" << fd_newClient << "]" << std::endl;
-	}
-	catch (std::exception& e)
+	if (all_check_ok(fd_newClient))
 	{
-		return ;
+		if (newClient->getBot() == false)
+		{	
+			std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
+			std::cout << BGREEN " connected ✔️" RESET << std::endl;
+		}
+		else
+		{
+			std::cout << ITALIC "Bot [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
+			std::cout << BGREEN " connected ✔️" RESET << std::endl;
+		}
+
+		//WELCOME MSG -> to client 
+		std::string message = RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), Command::getHostname()) + "\n"
+			+ RPL_YOURHOST("RCI", "1.2.5") + "\n" + RPL_CREATED("today") + "\n" + RPL_MYINFO("RCI", "1.2.5", "i/t/k/o/l", "...") + "\n";
+		send(fd_newClient, message.c_str(), message.size(), 0);
+		std::cout << GREEN "Reply: RPL_WELCOME / RPL_YOURHOST / RPL_CREATED / RPL_MYINFO " << "[" << fd_newClient << "]" RESET << std::endl;
 	}
-	
-	if (newClient->getBot() == false)
-	{	
-		std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
-		std::cout << BGREEN " connected ✔️" RESET << std::endl;
-	}
-	else
-	{
-		std::cout << ITALIC "Bot [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
-		std::cout << BGREEN " connected ✔️" RESET << std::endl;
-	}
-	
-	//WELCOME MSG -> to client 
-	std::string message = RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), Command::getHostname()) + "\n"
-		+ RPL_YOURHOST("RCI", "1.2.5") + "\n" + RPL_CREATED("today") + "\n" + RPL_MYINFO("RCI", "1.2.5", "i/t/k/o/l", "...") + "\n";
-	send(fd_newClient, message.c_str(), message.size(), 0);
-	std::cout << GREEN "Reply: RPL_WELCOME / RPL_YOURHOST / RPL_CREATED / RPL_MYINFO " << "[" << fd_newClient << "]" RESET << std::endl;
 }
 
+bool Server::all_check_ok(int fd_newClient)
+{
+	if (getClientByFd(fd_newClient)->getPassCheck() == 2 && getClientByFd(fd_newClient)->getNickCheck() == 2 
+			&& getClientByFd(fd_newClient)->getUserCheck() == 2)
+		return (true);
+	return (false);
+}
+	
 std::map<std::string, Channel*> Server::getChannelList()
 {
 	return (_channelList);

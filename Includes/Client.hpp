@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 16:46:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/24 16:42:17 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/26 12:24:33 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,23 @@ class Client
 		std::string _Hostname;
 		std::string _Realname;
 
+		int user_check;
+		int nick_check;
+		int pass_check;
+
 		std::vector<Channel *> _joinedChannels;
 		bool _bot;
 
 	public:
 		Client();
 		~Client();
+		
+		int getUserCheck();
+		int getPassCheck();
+		int getNickCheck();
+		void setNickCheck(int i);
+		void setUserCheck(int i);
+		void setPassCheck(int i);
 		
 		bool getBot();
 		void setBot();
@@ -64,6 +75,9 @@ class Client
 		void	leftChannel(Channel *channel);
 		std::vector<Channel *>	getJoinedChannels();
 
+		static void splitAndKeepLastTwo(const std::string& str);
+		static std::string compare_remain_line(const std::string& str);
+		static std::vector<std::string> remain_line;
 		void	sendErrorMsg(std::string msg);
 };
 
