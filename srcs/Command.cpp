@@ -35,6 +35,10 @@ std::string Command::RegexCmd(std::string buff)
 	Regex_vector.push_back(QUIT);
 	Regex_vector.push_back(PART);
 	Regex_vector.push_back(WHO);
+	Regex_vector.push_back(PASS);
+	Regex_vector.push_back(USERCMD);
+	Regex_vector.push_back(NICKCMD);
+
 	
 	regex_t regex;
 	int ret;
@@ -102,6 +106,33 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 	{
 		std::cout << YELLOW "WHO cmd detected" RESET << std::endl;
 		whoCmd(server, client, args);
+	}
+	else if (cmdName == PASS)
+	{
+		std::cout << YELLOW "PASS cmd detected" RESET << std::endl;
+		std::string error_message = (ERR_ALREADYREGISTRED(client.GetNick())) + "\r\n";
+		send(client.GetFd(), error_message.c_str(), error_message.size(), 0);
+		std::cout << RED "Error: ERR_ALREADYREGISTRED " << "[" << client.GetIp() << "] ["
+			<< client.GetFd() << "]" RESET << std::endl;
+	}
+	else if (cmdName == NICKCMD)
+	{
+		std::cout << YELLOW "NICK cmd detected" RESET << std::endl;
+		std::string msg;
+		for (std::vector<std::string>::iterator it = args.begin(); it != args.end(); ++it)
+		{
+			msg += *it + " ";
+		}
+		msg.erase(msg.size() - 1);
+		server.NickCheck(client.GetFd(), &client, msg, 1);
+	}
+	else if (cmdName == USERCMD)
+	{
+		std::cout << YELLOW "USER cmd detected" RESET << std::endl;
+		std::string error_message = (ERR_ALREADYREGISTRED(client.GetNick())) + "\r\n";
+		send(client.GetFd(), error_message.c_str(), error_message.size(), 0);
+		std::cout << RED "Error: ERR_ALREADYREGISTRED " << "[" << client.GetIp() << "] ["
+			<< client.GetFd() << "]" RESET << std::endl;
 	}
 }
 
