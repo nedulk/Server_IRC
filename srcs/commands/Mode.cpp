@@ -87,6 +87,8 @@ void	Command::executeModes(Server& server, Client& client, Channel* channel, std
 	std::string	msg;
 	size_t 		i = 0;
 
+	if (flags.second.size() < 2)
+		return ;
 	while (i < flags.second.size() - 1)
 	{
 		arg.clear();
@@ -116,6 +118,35 @@ void	Command::executeModes(Server& server, Client& client, Channel* channel, std
 	}
 }
 
+static void	printActiveModes(Client& client, Channel* channel)
+{
+	std::string	msg = ":ircserv 324 " + client.GetNick() + " " + channel->getName() + " +";
+
+	if (channel->getTopicRestr())
+		msg += "t";
+	if (channel->getInviteOnly())
+		msg += "i";
+	if (channel->getUserLimit() != -1)
+		msg += "l";
+	if (channel->getIsChannelKey())
+		msg += "k";
+	if (channel->getUserLimit() != -1)
+	{
+		std::ostringstream ss;
+		ss << channel->getUserLimit();
+		msg += " " + ss.str();
+	}
+	if (channel->getIsChannelKey())
+	{
+		if (channel->getOperators().count(client.GetFd()) == 0)
+			msg += " *";
+		else
+			msg += " " + channel->getKey();
+	}
+	msg += "\r\n";
+	send(client.GetFd(), msg.c_str(), msg.size(), 0);
+}
+
 void	Command::modeCmd(Server &server, Client &client, std::vector<std::string> args)
 {
 	std::vector<std::pair<int, std::string> >	flags;
@@ -128,8 +159,6 @@ void	Command::modeCmd(Server &server, Client &client, std::vector<std::string> a
 	args.erase(args.begin());
 	if (args.empty())
 	{
-		// need to print active modes if no argument
-		// shouldn't send an error msg
 		client.sendErrorMsg(":ircserv " + (ERR_NEEDMOREPARAMS(client.GetNick(), "MODE")) + "\r\n");
 		return ;
 	}
@@ -140,17 +169,12 @@ void	Command::modeCmd(Server &server, Client &client, std::vector<std::string> a
 	}
 	channel = server.getChannelList().at(args.front());
 	args.erase(args.begin());
+	if (args.empty())
+	{
+		printActiveModes(client, channel);
+		return ;
+	}
 	getArgs(flags, cmdArgs, args);
 	for (std::vector<std::pair<int, std::string> >::iterator it = flags.begin(); it != flags.end(); ++it)
-	{
-		std::cout << (*it).first << " : " << (*it).second << std::endl;
-	}
-	for (std::vector<std::string>::iterator it = cmdArgs.begin(); it != cmdArgs.end(); ++it)
-	{
-		std::cout << "args: " << *it << std::endl;
-	}
-	for (std::vector<std::pair<int, std::string> >::iterator it = flags.begin(); it != flags.end(); ++it)
-	{
 		executeModes(server, client, channel, *it, cmdArgs);
-	}
 }
