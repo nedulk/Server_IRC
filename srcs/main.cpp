@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:11:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/26 09:04:24 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 10:35:42 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,10 @@ int main(int argc, char **argv)
 			return (1);
 		}
 
-		if (password1.length() < 3 || password2.length() < 3)
+		if (password1.length() < 3 || password2.length() < 3 || password1.find(' ') != std::string::npos
+			|| password2.find(' ') != std::string::npos)
 		{
-			std::cout << RED "Passwords must be at least 3 characters long" RESET << std::endl;
+			std::cout << RED "Passwords must be at least 3 characters long without spaces" RESET << std::endl;
 			return (1);
 		}
 

@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 10:07:02 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 10:18:01 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,8 @@ void Server::receive_message(int fd_newClient, Client* newClient)
 	size_t bytes = recv(fd_newClient, buff_r, sizeof(buff_r) - 1, 0);
 	if (bytes <= 0)
 	{
-		std::cout << "Client [" << fd_newClient << "] disconnected\n";
+		std::cout << ITALIC "Client [" << getClientByFd(fd_newClient)->GetIp() << "]" << " [" << fd_newClient << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
 		close(fd_newClient);
 		return;
 	}

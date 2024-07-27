@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/26 11:32:07 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 10:29:47 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,7 @@ void Server::ServerInit()
 			if (fds[i].revents & POLLIN)
 			{
 				if (fds[i].fd == this->_ServerSocketFd)
-				{	
-					std::cout << "test" << std::endl;
+				{
 					// -> le serveur a un socket d'ecoute et attend une requete sur port specifique (ici 6667)
 					// -> le serveur recoit une demande sur ce socket d'ecoute
 					// -> le serveur accepte la connexion
@@ -224,7 +223,6 @@ void Server::ClearClients(int fd)
 
         for (std::vector<Channel*>::iterator it = joinedChannels.begin(); it != joinedChannels.end(); )
         {
-            std::cout << "joinedChannel : " << (*it)->getName() << std::endl;
             (*it)->delUser(client);
             if ((*it)->getOperators().count(client->GetFd()) != 0)
                 (*it)->delOperator(client);

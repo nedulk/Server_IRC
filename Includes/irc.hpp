@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:58:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/17 17:34:55 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 10:26:31 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@
 # define ERR_PASSWDMISMATCH						"464 :Password incorrect\r\n"
 # define ERR_ERRONEUSNICKNAME(nick)				"432 " + nick + " :Erroneous nickname"
 # define ERR_NICKNAMEINUSE(nick)				"433 * " + nick + " :Nickname is already in use"
-# define ERR_NOSUCHNICK(input, nick)			"401 " + input + " " + nick + " :No such nick"
+# define ERR_NOSUCHNICK(input, nick)			"401 " + input + " " + nick + " :No such nick\n"
 # define ERR_NOSUCHCHANNEL(input, chan)			"403 " + input + " " + chan + " :No such channel"
 # define ERR_CANNOTSENDTOCHAN(input, chan)		"404 " + input + " " + chan + " :Cannot send to channel"
 # define ERR_NOORIGIN(input)					"409 " + input + " :No origin specified"
