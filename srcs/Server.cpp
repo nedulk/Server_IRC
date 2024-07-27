@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 10:29:47 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 14:33:08 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,11 +271,6 @@ void Server::ClearAllClients()
         delete *it;
         it = _Clients.erase(it);
     }
-	// std::vector<struct pollfd>::iterator it_fds = fds.begin();
-	// while (it_fds != fds.end())
-	// {
-	// 	it_fds = fds.erase(it_fds);
-	// }
 }
 
 void Server::ClearAllChannels()
@@ -304,23 +299,6 @@ std::string getCurrentTime()
 	std::time_t result = std::time(0);
 	std::string timeStr(ctime(&result));
 	return timeStr.substr(0, timeStr.size()-1);
-}
-
-void Server::printState()
-{
-	std::cout << std::endl << BLACK << getCurrentTime() << "    " << "Clients connected: " << _Clients.size() << std::endl;
-	std::cout << BLACK << "                       " << "    " << GREEN << "----------------------" << RESET << std::endl;
-	if (!_Clients.empty())
-	{
-		for (std::vector<Client*>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
-		{
-			std::cout << BLACK << "                       " << "    " << "Client nick: " << (*it)->GetNick() << std::endl;
-			std::cout << BLACK << "                       " << "    " << "Client user: " << (*it)->GetUsername() << std::endl;
-			std::cout << BLACK << "                       "<< "    " << "Client fd: " << (*it)->GetFd() << std::endl;
-			if (it != _Clients.end() - 1)
-				std::cout << BLACK << "                           " << GREEN << "-----------" << RESET << std::endl;
-		}
-	}
 }
 
 Client *Server::getClientByName(std::string name, int mode)
