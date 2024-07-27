@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:35:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/25 11:01:13 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 14:20:13 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ void Bot::listen()
 		}
 		std::string message(buffer);
 		std::cout << "Received: " << message;
+		if (message.find("464 :Password incorrect") != std::string::npos)
+			break ;
 
 		std::string trucateMsg = trueMessage(message);
 		if (trucateMsg == "PING")

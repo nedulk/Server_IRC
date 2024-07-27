@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 16:46:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/26 12:24:33 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/27 14:54:32 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ class Channel;
 class Client
 {
 	private:
-		int _fd; // client fd
-		std::string _IP; // Adresse Ip du client
+		int _fd;
+		std::string _IP;
 
 		//NICK
 		std::string _Nickname;
