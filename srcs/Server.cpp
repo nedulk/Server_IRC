@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/25 16:08:50 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/26 11:32:07 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,13 @@ void Server::ServerInit()
 			{
 				if (fds[i].fd == this->_ServerSocketFd)
 				{	
+					std::cout << "test" << std::endl;
 					// -> le serveur a un socket d'ecoute et attend une requete sur port specifique (ici 6667)
 					// -> le serveur recoit une demande sur ce socket d'ecoute
 					// -> le serveur accepte la connexion
 					// -> le serveur cree un socket unique pour la communication 
 					NewClient(); // on va accepter le nouveau client et cree un socket de communication entre le serveur et ce client specifique
+					
 				}
 				else		
 					ReceiveNewData(fds[i].fd);
@@ -136,7 +138,6 @@ void Server::NewClient()
 	fds.push_back(NewPoll);
 	std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET << std::endl;
 	_Clients.push_back(newClient);
-	FirstCoHandler(socketFd_newClient, newClient);
 }
 
 void Server::ReceiveNewData(int fd)
@@ -145,62 +146,69 @@ void Server::ReceiveNewData(int fd)
 	for (int i = 0; i < 1024; i++)
 		buff[i] = 0;
 	
-	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0); // reception de la data
-
-	if (bytes <= 0 && getClientByFd(fd)->getBot() == true)
+	if (all_check_ok(fd) == false)
 	{
-		std::cout << ITALIC "Bot [" << fd << "]" RESET;
-		std::cout << BRED " disconnected ×" RESET << std::endl;
-		ClearClients(fd);
-		close(fd);
-	}
-	else if (bytes <= 0 && getClientByFd(fd)->getBot() == false) // le client est deco
-	{
-		std::cout << ITALIC "Client [" << getClientByFd(fd)->GetIp() << "]" << " [" << fd << "]" RESET;
-		std::cout << BRED " disconnected ×" RESET << std::endl;
-		ClearClients(fd);
-		close(fd);
+		FirstCoHandler(fd, getClientByFd(fd));	
 	}
 	else
 	{
-		std::queue<std::string> commands;
-		buff[bytes] = '\0';
-		std::string message = buff;
+		ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0); // reception de la data
 
-		// Split message into commands
-		std::string::size_type pos = 0, lastPos = 0;
-		while ((pos = message.find('\n', lastPos)) != std::string::npos)
+		if (bytes <= 0 && getClientByFd(fd)->getBot() == true)
 		{
-			std::string command = message.substr(lastPos, pos - lastPos);
+			std::cout << ITALIC "Bot [" << fd << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
+			ClearClients(fd);
+			close(fd);
+		}
+		else if (bytes <= 0 && getClientByFd(fd)->getBot() == false) // le client est deco
+		{
+			std::cout << ITALIC "Client [" << getClientByFd(fd)->GetIp() << "]" << " [" << fd << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
+			ClearClients(fd);
+			close(fd);
+		}
+		else
+		{
+			std::queue<std::string> commands;
+			buff[bytes] = '\0';
+			std::string message = buff;
 
-			// Remove \r from command
+			// Split message into commands
+			std::string::size_type pos = 0, lastPos = 0;
+			while ((pos = message.find('\n', lastPos)) != std::string::npos)
+			{
+				std::string command = message.substr(lastPos, pos - lastPos);
+
+				// Remove \r from command
+				command.erase(std::remove(command.begin(), command.end(), '\r'), command.end());
+				if (!command.empty() && command.find_first_not_of('\n') != std::string::npos)
+					commands.push(command);
+				lastPos = pos + 1;
+			}
+
+			// Add last command to queue
+			std::string command = message.substr(lastPos);
 			command.erase(std::remove(command.begin(), command.end(), '\r'), command.end());
 			if (!command.empty() && command.find_first_not_of('\n') != std::string::npos)
 				commands.push(command);
-			lastPos = pos + 1;
-		}
 
-		// Add last command to queue
-		std::string command = message.substr(lastPos);
-		command.erase(std::remove(command.begin(), command.end(), '\r'), command.end());
-		if (!command.empty() && command.find_first_not_of('\n') != std::string::npos)
-			commands.push(command);
-
-		// Process each command
-		while (!commands.empty())
-		{
-			std::string command = commands.front();
-			commands.pop();
-
-			std::string regex = Command::RegexCmd(command.c_str());
-			if (!regex.empty())
-				Command::execCmd(*this, *getClientByFd(fd), regex, Command::GetCmdArgs(command.c_str()));
-			else
+			// Process each command
+			while (!commands.empty())
 			{
-				std::string errMsg = ERR_UNKNOWNCOMMAND(command) + "\n";
-				send(fd, errMsg.c_str(), errMsg.size(), 0);
-				std::cout << RED "Error: ERR_UNKNOWNCOMMAND " << "[" << getClientByFd(fd)->GetIp() << "] ["
-					<< fd << "]" RESET << std::endl;
+				std::string command = commands.front();
+				commands.pop();
+
+				std::string regex = Command::RegexCmd(command.c_str());
+				if (!regex.empty())
+					Command::execCmd(*this, *getClientByFd(fd), regex, Command::GetCmdArgs(command.c_str()));
+				else
+				{
+					std::string errMsg = ERR_UNKNOWNCOMMAND(command) + "\n";
+					send(fd, errMsg.c_str(), errMsg.size(), 0);
+					std::cout << RED "Error: ERR_UNKNOWNCOMMAND " << "[" << getClientByFd(fd)->GetIp() << "] ["
+						<< fd << "]" RESET << std::endl;
+				}
 			}
 		}
 	}
