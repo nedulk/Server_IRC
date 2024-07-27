@@ -17,13 +17,7 @@ std::vector<std::string> Command::GetCmdArgs(std::string buff)
         end = buff.find(' ', start);
     }
     args.push_back(buff.substr(start));
-
-	////// DEBUG pour voir les arguments d'une commande //////
-	// std::cout << "cmd args: \n";
-	// for(std::vector<std::string>::iterator it = args.begin(); it != args.end(); ++it)
-	// {
-	// 	std::cout << *it << std::endl;
-	// }
+	
     return (args);
 }
 

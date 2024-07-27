@@ -87,12 +87,12 @@ void Command::joinCmd(Server& server, Client& sender, std::vector<std::string> &
 
 void Command::joinChannel(Server& server, Client& sender, std::string &channelName, std::string key)
 {
-	if (server.getChannelList().count(channelName) == 0) //channel doesnt exist
+	if (server.getChannelList().count(channelName) == 0)
 	{
 		server.createChannel(&sender, channelName, key);
 		return ;
 	}
-	try	//channel exists
+	try
 	{
 		Channel	*channel = server.getChannelList().at(channelName);
 
