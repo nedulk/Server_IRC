@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   QuitCmd.cpp                                        :+:      :+:    :+:   */
+/*   QuitCmd_bonus.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 15:41:17 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 14:48:27 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 14:58:07 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Command.hpp"
+#include "Command_bonus.hpp"
 
 void Command::quitCmd(Server& server, Client& client, std::vector<std::string> args)
 {

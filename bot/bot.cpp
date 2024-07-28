@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:35:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 12:43:09 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 16:50:52 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void Bot::authenticate()
 
 void Bot::joinChannel(const std::string& channel)
 {
+	sleep(1);
 	sendRaw("JOIN " + channel + "\r\n");
 }
 int Bot::listen() 

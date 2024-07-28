@@ -2,7 +2,7 @@
 // Created by trcgab on 7/22/24.
 //
 
- #include "irc.hpp"
+ #include "irc_bonus.hpp"
 
 static bool	isEmpty(std::string arg)
 {

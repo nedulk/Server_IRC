@@ -96,9 +96,16 @@ void	Command::operatorFlag(bool input, Server& server, Channel *channel, Client&
 		return ;
 
 	if (input == true)
+	{
+		channel->addOperator(user);
 		mode = "+o";
+	}
 	else
+	{
+		if (channel->getOperators().count(user->GetFd()) != 0)
+			channel->delOperator(user);
 		mode = "-o";
+	}
 	channel->broadcastMsg(":" + client.GetNick() + "!" + client.GetUsername() + "@"
 						  + Command::getHostname() + " MODE " + channel->getName() + " "
 						  + mode + " " + user->GetNick() + "\r\n",

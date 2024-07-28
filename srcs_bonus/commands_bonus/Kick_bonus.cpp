@@ -2,7 +2,7 @@
 // Created by trcgab on 7/19/24.
 //
 
-#include "irc.hpp"
+#include "irc_bonus.hpp"
 
 static void parseArg(std::string &arg, std::vector<std::string>& channels)
 {

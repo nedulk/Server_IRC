@@ -2,7 +2,7 @@
 // Created by trcgab on 7/22/24.
 //
 
-#include "irc.hpp"
+#include "irc_bonus.hpp"
 
 void	inviteUser(Server& server, Client& client, std::string& invitedNick, std::string& channelName)
 {

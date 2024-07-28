@@ -2,7 +2,7 @@
 // Created by gangouil on 7/11/24.
 //
 
-#include "Command.hpp"
+#include "Command_bonus.hpp"
 
 void Command::privMsg(Server& server, Client& client, std::vector<std::string> args)
 {
