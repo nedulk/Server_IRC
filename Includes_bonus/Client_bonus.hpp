@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 16:46:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 10:05:39 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 10:15:53 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class Client
 	private:
 		int _fd;
 		std::string _IP;
+		std::string	_buffer;
 
 		//NICK
 		std::string _Nickname;
@@ -48,6 +49,9 @@ class Client
 		void setNickCheck(int i);
 		void setUserCheck(int i);
 		void setPassCheck(int i);
+
+		std::string	getClientBuff();
+		void		setClientBuff(std::string msg);
 
 		bool getBot();
 		void setBot();

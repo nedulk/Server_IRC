@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 10:06:37 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 10:19:35 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void Server::ServerInit()
 			{
 				if (fds[i].fd == this->_ServerSocketFd)
 					NewClient();
-					
 				else		
 					ReceiveNewData(fds[i].fd);
 			}
@@ -164,8 +163,15 @@ void Server::ReceiveNewData(int fd)
 		{
 			std::queue<std::string> commands;
 			buff[bytes] = '\0';
-			std::string message = buff;
-
+			
+			Client	*client	= getClientByFd(fd);
+			client->setClientBuff(client->getClientBuff() + buff);
+			
+			if (client->getClientBuff().find("\r\n") == std::string::npos)
+				return ;
+			std::string message = client->getClientBuff();
+			client->setClientBuff("");
+			
 			// Split message into commands
 			std::string::size_type pos = 0, lastPos = 0;
 			while ((pos = message.find('\n', lastPos)) != std::string::npos)

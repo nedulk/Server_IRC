@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:36:18 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 10:06:18 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 10:15:09 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,4 +183,13 @@ std::vector<Channel*> Client::getJoinedChannels()
 void Client::sendErrorMsg(std::string msg)
 {
 	send(_fd, msg.c_str(), msg.size(), 0);
+}
+
+std::string Client::getClientBuff() {
+	return (_buffer);
+}
+
+void Client::setClientBuff(std::string msg)
+{
+	_buffer = msg;
 }
