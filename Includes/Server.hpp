@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 15:49:32 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 09:45:19 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 11:06:17 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class Server
 		void	PasswordCheck(int fd_newClient, const std::string& message);
 		
 		bool all_check_ok(int fd_newClient);
-		void receive_message(int fd_newClient, Client* newClient);
+		int receive_message(int fd_newClient, Client* newClient);
 		void handle_message(int fd_newClient, Client* newClient);
 		
 		void CloseFds();

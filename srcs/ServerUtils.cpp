@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 09:43:17 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 11:07:20 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void Server::handle_message(int fd_newClient, Client* newClient)
 				getClientByFd(fd_newClient)->setPassCheck(2);
 			}
 		} 
-		else if (message.find("NICK ") == 0 && getClientByFd(fd_newClient)->getNickCheck() == 0)
+		else if (message.find("NICK ") == 0 && getClientByFd(fd_newClient)->getNickCheck() == 0 && newClient->getPassCheck() == 2)
 		{
 			NickCheck(fd_newClient, newClient, message, 0);
 			if (getClientByFd(fd_newClient)->getNickCheck() == 1)
@@ -134,19 +134,19 @@ void Server::handle_message(int fd_newClient, Client* newClient)
 				getClientByFd(fd_newClient)->setNickCheck(2);
 			}	
 		} 
-		else if (message.find("USER ") == 0 && getClientByFd(fd_newClient)->getUserCheck() == 0) 
+		else if (message.find("USER ") == 0 && getClientByFd(fd_newClient)->getUserCheck() == 0 && newClient->getPassCheck() == 2) 
 		{
 			UserCheck(fd_newClient, newClient, message);
 			if (getClientByFd(fd_newClient)->getUserCheck() == 1)
 			{
-				std::cout << "NICK cmd [OK] [" << fd_newClient << "]" << std::endl;
+				std::cout << "USER cmd [OK] [" << fd_newClient << "]" << std::endl;
 				getClientByFd(fd_newClient)->setUserCheck(2);
 			}
 		}
 	}
 }
 	
-void Server::receive_message(int fd_newClient, Client* newClient)
+int Server::receive_message(int fd_newClient, Client* newClient)
 {
 	char buff_r[1024];
 	std::memset(buff_r, 0, sizeof(buff_r));
@@ -157,7 +157,7 @@ void Server::receive_message(int fd_newClient, Client* newClient)
 		std::cout << ITALIC "Client [" << getClientByFd(fd_newClient)->GetIp() << "]" << " [" << fd_newClient << "]" RESET;
 			std::cout << BRED " disconnected ×" RESET << std::endl;
 		close(fd_newClient);
-		return;
+		return (1);
 	}
 
 	std::string message(buff_r);
@@ -171,11 +171,13 @@ void Server::receive_message(int fd_newClient, Client* newClient)
 	handle_message(fd_newClient, newClient);
 
 	Client::remain_line.clear();
+	return (0);
 }
 
 void Server::FirstCoHandler(int fd_newClient, Client* newClient)
 {
-	receive_message(fd_newClient, newClient);
+	if (receive_message(fd_newClient, newClient) == 1)
+		return ;
 
 	if (all_check_ok(fd_newClient))
 	{

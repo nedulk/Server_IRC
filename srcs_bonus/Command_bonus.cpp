@@ -38,6 +38,7 @@ std::string Command::RegexCmd(std::string buff)
 	Regex_vector.push_back(PASS);
 	Regex_vector.push_back(USERCMD);
 	Regex_vector.push_back(NICKCMD);
+	Regex_vector.push_back(BOTQUIT);
 
 	
 	regex_t regex;
@@ -133,6 +134,11 @@ void Command::execCmd(Server& server, Client& client, std::string cmdName, std::
 		send(client.GetFd(), error_message.c_str(), error_message.size(), 0);
 		std::cout << RED "Error: ERR_ALREADYREGISTRED " << "[" << client.GetIp() << "] ["
 			<< client.GetFd() << "]" RESET << std::endl;
+	}
+	else if (cmdName == BOTQUIT)
+	{
+		std::cout << YELLOW "BOTQUIT cmd detected" RESET << std::endl;
+		send(client.GetFd(), "BOTQUIT\r\n", 9, 0);
 	}
 }
 

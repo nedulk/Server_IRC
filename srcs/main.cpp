@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:11:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 09:38:17 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 11:32:15 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 int main(int argc, char **argv)
 {
 	if (argc != 3)
-		std::cout << RED "Missing arguments" RESET << std::endl;
+		std::cout << RED "Wrong number of arguments" RESET << std::endl;
 	else
 	{
 		int port = std::atoi(argv[1]);
 		std::string password1 = argv[2];
 
-		if (port <= 0 || port > 65535)
+		if (port <= 0 || port > 65535)	
 		{
 			std::cout << RED "Invalid port number" RESET << std::endl;
 			return (1);

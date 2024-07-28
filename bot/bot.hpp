@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:34:26 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 15:01:51 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 12:32:08 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,14 @@
 # include <unistd.h>
 # include <poll.h>
 # include <cctype>
+# include <signal.h>
+# include <fcntl.h>
+# include <stdlib.h>
 
 class Bot 
 {
 	private:
-		int			_sockfd;
+		static int			_sockfd;
 		std::string _server_ip;
 		int			_port;
 		std::string _nickname;
@@ -42,7 +45,7 @@ class Bot
 		void sendRaw(const std::string& message);
 		void authenticate();
 		void joinChannel(const std::string& channel);
-		void listen();
+		int listen();
 		~Bot();
 
 		std::string trueMessage(std::string message);

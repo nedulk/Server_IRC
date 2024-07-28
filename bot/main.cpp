@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 13:46:47 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/27 17:43:12 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 12:38:12 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int main(int argc, char **argv) 
 {
+    signal(SIGINT, Bot::SignalHandler);
     if (argc == 3)
     {
         Bot bot("127.0.0.1", atoi(argv[2]), "Bot", "Bot", argv[1]);
@@ -21,7 +22,8 @@ int main(int argc, char **argv)
         {
             bot.authenticate();
             bot.joinChannel("#PingBot");
-            bot.listen();
+            if (bot.listen() == 1)
+                return (1);
         }
         return (0);
     }
