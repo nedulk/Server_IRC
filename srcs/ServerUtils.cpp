@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 11:07:20 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 12:57:32 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,11 +156,17 @@ int Server::receive_message(int fd_newClient, Client* newClient)
 	{
 		std::cout << ITALIC "Client [" << getClientByFd(fd_newClient)->GetIp() << "]" << " [" << fd_newClient << "]" RESET;
 			std::cout << BRED " disconnected ×" RESET << std::endl;
+		ClearClients(fd_newClient);
 		close(fd_newClient);
 		return (1);
 	}
 
-	std::string message(buff_r);
+	newClient->setClientBuff(newClient->getClientBuff() + buff_r);
+	if (newClient->getClientBuff().find("\r\n") == std::string::npos)
+		return (1);
+	std::string message = newClient->getClientBuff();
+	newClient->setClientBuff("");
+	
 	Client::splitAndKeepLastTwo(message);
 
 	for (std::vector<std::string>::iterator it = Client::remain_line.begin(); it != Client::remain_line.end(); ++it)
