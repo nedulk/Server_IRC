@@ -172,3 +172,12 @@ void Client::sendErrorMsg(std::string msg)
 {
 	send(_fd, msg.c_str(), msg.size(), 0);
 }
+
+std::string Client::getClientBuff() {
+	return (_buffer);
+}
+
+void Client::setClientBuff(std::string msg)
+{
+	_buffer = msg;
+}

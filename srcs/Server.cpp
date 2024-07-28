@@ -49,7 +49,6 @@ void Server::ServerInit()
 			{
 				if (fds[i].fd == this->_ServerSocketFd)
 					NewClient();
-					
 				else		
 					ReceiveNewData(fds[i].fd);
 			}
@@ -137,7 +136,7 @@ void Server::ReceiveNewData(int fd)
 	char buff[1024];
 	for (int i = 0; i < 1024; i++)
 		buff[i] = 0;
-	
+
 	if (all_check_ok(fd) == false)
 	{
 		FirstCoHandler(fd, getClientByFd(fd));	
@@ -157,7 +156,13 @@ void Server::ReceiveNewData(int fd)
 		{
 			std::queue<std::string> commands;
 			buff[bytes] = '\0';
-			std::string message = buff;
+
+			Client	*client	= getClientByFd(fd);
+			client->setClientBuff(client->getClientBuff() + buff);
+			if (client->getClientBuff().find("\r\n") == std::string::npos)
+				return ;
+			std::string message = client->getClientBuff();
+			client->setClientBuff("");
 
 			// Split message into commands
 			std::string::size_type pos = 0, lastPos = 0;

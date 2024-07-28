@@ -23,6 +23,7 @@ class Client
 	private:
 		int _fd;
 		std::string _IP;
+		std::string	_buffer;
 
 		//NICK
 		std::string _Nickname;
@@ -40,7 +41,9 @@ class Client
 	public:
 		Client();
 		~Client();
-		
+
+		std::string	getClientBuff();
+		void		setClientBuff(std::string msg);
 		int getUserCheck();
 		int getPassCheck();
 		int getNickCheck();
