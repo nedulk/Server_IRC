@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServerUtils.cpp                                    :+:      :+:    :+:   */
+/*   ServerUtils_bonus.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 17:30:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 09:43:17 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 10:06:43 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "Server_bonus.hpp"
 
 int Server::NickCheck_oc(const std::string& buff_rr)
 {
@@ -29,7 +29,12 @@ void Server::PasswordCheck(int fd_newClient, const std::string& message)
 	std::string pass = message.substr(5);
 	pass.erase(std::remove(pass.begin(), pass.end(), ' '), pass.end());
 	
-	if (pass == _Password) 
+	if (pass == _PasswordBot) 
+	{
+		getClientByFd(fd_newClient)->setBot();
+		getClientByFd(fd_newClient)->setPassCheck(1);
+	} 
+	else if (pass == _Password) 
 	{
 		getClientByFd(fd_newClient)->setPassCheck(1);
 	} 
@@ -53,7 +58,7 @@ void Server::NickCheck(int fd_newClient, Client* newClient, const std::string& m
 		if (!ret)
 		{
 			ret = regexec(&regex, nick.c_str(), 0, NULL, 0);
-			if (!ret)
+			if ((!ret && !newClient->getBot() && nick != "Bot") || (!ret && newClient->getBot() && nick == "Bot"))
 			{
 				newClient->SetNick(nick);
 				if (mode == 0)
@@ -179,9 +184,17 @@ void Server::FirstCoHandler(int fd_newClient, Client* newClient)
 
 	if (all_check_ok(fd_newClient))
 	{
-		std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
-		std::cout << BGREEN " connected ✔️" RESET << std::endl;
-		
+		if (newClient->getBot() == false)
+		{	
+			std::cout << ITALIC "New client [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
+			std::cout << BGREEN " connected ✔️" RESET << std::endl;
+		}
+		else
+		{
+			std::cout << ITALIC "Bot [" << newClient->GetIp() << "]" << " [" << newClient->GetFd() << "]" RESET;
+			std::cout << BGREEN " connected ✔️" RESET << std::endl;
+		}
+
 		//WELCOME MSG -> to client 
 		std::string message = RPL_WELCOME(newClient->GetNick(), newClient->GetUsername(), Command::getHostname()) + "\n"
 			+ RPL_YOURHOST("RCI", "1.2.5") + "\n" + RPL_CREATED("today") + "\n" + RPL_MYINFO("RCI", "1.2.5", "i/t/k/o/l", "...") + "\n";
@@ -212,6 +225,8 @@ void Server::createChannel(Client *oper, std::string &channelName, std::string k
 {
 	try
 	{
+		if (channelName == "#PingBot" && oper->getBot() == false)
+			throw(std::runtime_error("Error: A client cannot create this Channel due to restrictions."));
 		Channel	*newChannel = new Channel(channelName);
 
 		if (!key.empty())

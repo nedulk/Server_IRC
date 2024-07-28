@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.cpp                                         :+:      :+:    :+:   */
+/*   Client_bonus.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:36:18 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 09:40:16 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 10:06:18 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+#include "Client_bonus.hpp"
 
 std::vector<std::string> Client::remain_line;
 
-Client::Client()
+Client::Client(): _bot(false)
 {
 	this->_Hostname = "";
 	this->_Nickname = "";
@@ -84,6 +84,18 @@ void Client::setPassCheck(int i)
 void Client::setNickCheck(int i)
 {
 	nick_check = i;
+}
+
+
+bool Client::getBot()
+{
+	return (this->_bot);
+}
+
+void Client::setBot()
+{
+	if (this->_bot == false)
+		this->_bot = true;
 }
 
 void Client::SetFd(int fd)

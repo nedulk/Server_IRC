@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Client.hpp                                         :+:      :+:    :+:   */
+/*   Client_bonus.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 16:46:21 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 09:39:41 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 10:05:39 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-# include "irc.hpp"
+# include "irc_bonus.hpp"
 
 class Server;
 class Channel;
@@ -36,6 +36,7 @@ class Client
 		int pass_check;
 
 		std::vector<Channel *> _joinedChannels;
+		bool _bot;
 
 	public:
 		Client();
@@ -47,6 +48,9 @@ class Client
 		void setNickCheck(int i);
 		void setUserCheck(int i);
 		void setPassCheck(int i);
+
+		bool getBot();
+		void setBot();
 		
 		void SetFd(int fd);
 		int GetFd();

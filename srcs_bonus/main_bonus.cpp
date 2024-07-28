@@ -1,25 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   main_bonus.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 16:11:46 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 09:38:17 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 10:06:30 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "irc.hpp"
+#include "irc_bonus.hpp"
 
 int main(int argc, char **argv)
 {
-	if (argc != 3)
+	if (argc != 4)
 		std::cout << RED "Missing arguments" RESET << std::endl;
 	else
 	{
 		int port = std::atoi(argv[1]);
 		std::string password1 = argv[2];
+		std::string password2 = argv[3];
 
 		if (port <= 0 || port > 65535)
 		{
@@ -27,13 +28,14 @@ int main(int argc, char **argv)
 			return (1);
 		}
 
-		if (password1.length() < 3 || password1.find(' ') != std::string::npos)
+		if (password1.length() < 3 || password2.length() < 3 || password1.find(' ') != std::string::npos
+			|| password2.find(' ') != std::string::npos)
 		{
-			std::cout << RED "Password must be at least 3 characters long without spaces" RESET << std::endl;
+			std::cout << RED "Passwords must be at least 3 characters long without spaces" RESET << std::endl;
 			return (1);
 		}
 
-		Server server(port, password1.c_str());
+		Server server(port, password1.c_str(), password2.c_str());
 		std::cout << YELLOW << "===================== SERVER IRC =====================" << RESET << std::endl;
 		try
 		{

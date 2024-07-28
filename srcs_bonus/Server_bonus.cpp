@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   Server_bonus.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 17:00:24 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 09:44:24 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/28 10:06:37 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "Server_bonus.hpp"
 
 bool Server::_Signal = false;
 
@@ -20,7 +20,7 @@ void Server::SignalHandler(int signum)
 	Server::_Signal = true;
 }
 
-Server::Server(int port, std::string password): _Password(password), _Port(port), _ServerSocketFd(-1)
+Server::Server(int port, std::string password, std::string passwordBot): _Password(password), _PasswordBot(passwordBot), _Port(port), _ServerSocketFd(-1)
 {
 }
 
@@ -144,9 +144,16 @@ void Server::ReceiveNewData(int fd)
 	}
 	else
 	{
-		ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0);
+		ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0); // reception de la data
 
-		if (bytes <= 0)
+		if (bytes <= 0 && getClientByFd(fd)->getBot() == true)
+		{
+			std::cout << ITALIC "Bot [" << fd << "]" RESET;
+			std::cout << BRED " disconnected ×" RESET << std::endl;
+			ClearClients(fd);
+			close(fd);
+		}
+		else if (bytes <= 0 && getClientByFd(fd)->getBot() == false) // le client est deco
 		{
 			std::cout << ITALIC "Client [" << getClientByFd(fd)->GetIp() << "]" << " [" << fd << "]" RESET;
 			std::cout << BRED " disconnected ×" RESET << std::endl;
@@ -271,6 +278,13 @@ void Server::CloseFds()
 {
 	for (int i = 3; i < 1024 ; i++)
 		close(i);
+}
+
+std::string getCurrentTime()
+{
+	std::time_t result = std::time(0);
+	std::string timeStr(ctime(&result));
+	return timeStr.substr(0, timeStr.size()-1);
 }
 
 Client *Server::getClientByName(std::string name, int mode)
