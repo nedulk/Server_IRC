@@ -6,7 +6,7 @@
 /*   By: kprigent <kprigent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 15:41:17 by kprigent          #+#    #+#             */
-/*   Updated: 2024/07/28 14:58:07 by kprigent         ###   ########.fr       */
+/*   Updated: 2024/07/31 15:13:15 by kprigent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,14 @@ void Command::quitCmd(Server& server, Client& client, std::vector<std::string> a
 			message.append(" ").append(*it);
 		it++;
 	}
-	send(client.GetFd(), message.c_str(), message.size(), 0);
+	message += "\r\n";
+	std::vector<Channel*> channelList = client.getJoinedChannels();
+	for (std::vector<Channel*>::iterator it = channelList.begin(); it != channelList.end(); ++it)
+	{
+		(*it)->broadcastMsg(":" + client.GetNick() + "!" + client.GetHostname()
+				+ "@" + Command::getHostname() + " QUIT :" + message,
+				client, false);
+	}
 	std::cout << ITALIC "New client [" << client.GetIp() << "]" << " [" << client.GetFd() << "]" RESET;
 	std::cout << BRED " disconnected ❌" RESET << std::endl;
 	(void)server;
